@@ -1,4 +1,5 @@
 const axios = require("axios");
+const {standardiseArtwork} = require("../utils/standardiseArtwork");
 
 exports.fetchMetArtworks = (query) => {
   if (!query || query.trim() === "") {
@@ -10,7 +11,7 @@ exports.fetchMetArtworks = (query) => {
   return axios
     .get(url)
     .then(({ data }) => {
-      if (!data.objectIDs.length === 0) {
+      if (data.total === 0 ) {
         return [];
       }
 
@@ -22,7 +23,7 @@ exports.fetchMetArtworks = (query) => {
             .get(
               `https://collectionapi.metmuseum.org/public/collection/v1/objects/${id}`
             )
-            .then(({ data }) => data)
+            .then(({ data }) => standardiseArtwork(data, "met"))
             .catch((err) => {
               //null for invalid returned ids------ why metapi:_(
                if (err.response && err.response.status === 404) {
@@ -33,5 +34,4 @@ exports.fetchMetArtworks = (query) => {
         })
       );
     })
-    .then((artworks) => artworks.filter(Boolean));
 };

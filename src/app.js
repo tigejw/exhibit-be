@@ -4,6 +4,9 @@ const searchRoutes = require("./routes/searchRoutes.js");
 const app = express();
 app.use(express.json());
 
+const cors = require("cors");
+app.use(cors());
+
 app.use("/", searchRoutes);
 
 //invalid url handling
