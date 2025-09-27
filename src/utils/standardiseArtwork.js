@@ -1,5 +1,6 @@
-exports.standardiseArtwork = function (artwork, source) {
+exports.standardiseArtwork = function (artwork, source, onDisplay) {
   if (source === "met") {
+
     return {
       source: "met",
       objectID: artwork.objectID,
@@ -14,6 +15,7 @@ exports.standardiseArtwork = function (artwork, source) {
       dimensions: artwork.dimensions || null,
       primaryImage: artwork.primaryImage || null,
       primaryImageSmall: artwork.primaryImageSmall || null,
+      isOnView: artwork.GalleryNumber ? true : false,
     };
   }else if (source === "chicago") {
     return {
@@ -35,6 +37,7 @@ exports.standardiseArtwork = function (artwork, source) {
       primaryImageSmall: artwork.image_id
         ? `https://www.artic.edu/iiif/2/${artwork.image_id}/full/200,/0/default.jpg`
         : null,
+      isOnView: artwork.is_on_view || false,
     };
   }
   return null;

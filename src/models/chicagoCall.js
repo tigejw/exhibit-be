@@ -1,7 +1,7 @@
 const axios = require("axios");
 
 const { standardiseArtwork } = require("../utils/standardiseArtwork");
-exports.fetchChicagoArtworks = (query) => {
+exports.fetchChicagoArtworks = (query, onDisplay) => {
   if (!query || query.trim() === "") {
     return Promise.reject({ status: 400, msg: "Bad request!" });
   }
@@ -17,13 +17,22 @@ exports.fetchChicagoArtworks = (query) => {
         return axios
           .get(artwork.api_link)
           .then(({ data }) => standardiseArtwork(data.data, "chicago"))
-            .catch((err) => {
+          .catch((err) => {
             if (err.response && err.response.status === 404) {
               return null;
             }
             throw err;
           });
       })
-    );
-  });   
+    ).then((artworks) => {
+      if (onDisplay === "true") {
+        return artworks.filter((artwork) => {
+          return artwork.isOnView === true;
+        });
+      } else if (onDisplay === "false") {
+        return artworks.filter((artwork) => artwork.isOnView === false);
+      }
+      return artworks;
+    });
+  });
 };
