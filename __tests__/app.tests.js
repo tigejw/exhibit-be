@@ -2,7 +2,7 @@ const request = require("supertest");
 const app = require("../src/app.js");
 
 describe("GET /search", () => {
-  test("200 responds with expected data structure (default/met)", () => {
+  test("200 responds with expected data structure (default)", () => {
     return request(app)
       .get("/search?q=van gogh")
       .expect(200)
@@ -63,6 +63,48 @@ describe("GET /search", () => {
     });
   });
 
+  describe('GET /search with on display filter', () => {
+    test("200 responds with expected data structure for on display=true", () => {
+      return request(app)
+        .get("/search?q=monet&on_display=true")
+        .expect(200)
+        .then(({ body: { artworksData } }) => {
+          expect(Array.isArray(artworksData)).toBe(true);
+          artworksData.forEach((artwork) => {
+            expect(artwork).toHaveProperty("objectID");
+            expect(artwork).toHaveProperty("title");
+            expect(artwork).toHaveProperty("isOnView");
+            expect(artwork.isOnView).toBe(true);
+          });
+        });
+    });
+    
+    test("200 responds with expected data structure for on display=false", () => {
+      return request(app)
+        .get("/search?q=monet&on_display=false")
+        .expect(200)
+        .then(({ body: { artworksData } }) => {
+          expect(Array.isArray(artworksData)).toBe(true);
+          artworksData.forEach((artwork) => {
+            expect(artwork).toHaveProperty("objectID");
+            expect(artwork).toHaveProperty("title");
+            expect(artwork).toHaveProperty("isOnView");
+            expect(artwork.isOnView).toBe(false);
+          });
+        });
+    });
+
+    test("400 responds with error for invalid on_display param", () => {
+      return request(app)
+        .get("/search?q=monet&on_display=invalidparam")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body).toHaveProperty("error");
+          expect(typeof body.error).toBe("string");
+        });
+    });
+  });
+
   describe("error handling", () => {
     test("200 responds with empty array if query matches nothing", () => {
       return request(app)
@@ -106,7 +148,7 @@ describe("invalid endpoints", () => {
   filter by department/genre(issues with coordinating diff/sameish departments?)
   return uniform artwork objects from both met and chicago
 
-
+  endpoints endpoint!
   also want a create exhibit endpoint
   this will link to a psql data base
   add artwork to exhibit endpoint
