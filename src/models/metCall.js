@@ -14,9 +14,8 @@ exports.fetchMetArtworks = (query) => {
       if (data.total === 0 ) {
         return [];
       }
-
-      const first20 = data.objectIDs.slice(0, 20);
-
+      const first20 = data.total >= 20 ? data.objectIDs.slice(0, 20) : data.objectIDs;
+      
       return Promise.all(
         first20.map((id) => {
           return axios
