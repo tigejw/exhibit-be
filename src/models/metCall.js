@@ -22,7 +22,14 @@ exports.fetchMetArtworks = (query, onDisplay) => {
       first20.map((id) => {
         return axios
           .get(
-            `https://collectionapi.metmuseum.org/public/collection/v1/objects/${id}`
+            `https://collectionapi.metmuseum.org/public/collection/v1/objects/${id}`,
+            //was getting rate limited without headers
+            {
+              headers: {
+                "User-Agent": "Mozilla/5.0 ...",
+                "Accept-Encoding": "identity",
+              },
+            }
           )
           .then(({ data }) => standardiseArtwork(data, "met", onDisplay))
           .catch((err) => {
@@ -33,6 +40,8 @@ exports.fetchMetArtworks = (query, onDisplay) => {
             throw err;
           });
       })
-    ).then((artworks) => artworks.filter(Boolean));
+    ).then((artworks) => {
+      return artworks.filter(Boolean);
+    });
   });
 };

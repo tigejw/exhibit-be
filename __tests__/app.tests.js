@@ -1,9 +1,32 @@
+/** @jest-environment setup-polly-jest/jest-environment-node */
+const { Polly } = require("@pollyjs/core");
+const NodeHttpAdapter = require("@pollyjs/adapter-node-http");
+const FSPersister = require("@pollyjs/persister-fs");
+Polly.register(NodeHttpAdapter);
+Polly.register(FSPersister);
+const path = require("path");
 const request = require("supertest");
 const app = require("../src/app.js");
-const axios = require("../__mocks__/axios");
-jest.mock("axios");
 
 describe("GET /search", () => {
+  let polly;
+
+  beforeAll(() => {
+    polly = new Polly("search-endpoint", {
+      adapters: ["node-http"],
+      persister: "fs",
+      recordIfMissing: true,
+      recordFailedRequests: true,
+      persisterOptions: {
+        fs: { recordingsDir: path.resolve(__dirname, "../__recordings__") },
+      },
+    });
+  });
+
+  afterAll(async () => {
+    await polly.stop(); 
+  });
+
   test("200 responds with expected data structure (default)", () => {
     return request(app)
       .get("/search?q=van gogh")
@@ -11,7 +34,7 @@ describe("GET /search", () => {
       .then(({ body: { artworksData } }) => {
         //check array
         expect(Array.isArray(artworksData)).toBe(true);
-        expect(artworksData.length).toEqual(2);
+        expect(artworksData.length).toEqual(40);
         //artwork object verification could be more thorough
         artworksData.forEach((artwork) => {
           expect(artwork).toHaveProperty("objectID");
@@ -30,7 +53,7 @@ describe("GET /search", () => {
         .expect(200)
         .then(({ body: { artworksData } }) => {
           expect(Array.isArray(artworksData)).toBe(true);
-          expect(artworksData.length).toEqual(1);
+          expect(artworksData.length).toEqual(20);
           artworksData.forEach((artwork) => {
             expect(artwork).toHaveProperty("objectID");
             expect(artwork).toHaveProperty("title");
@@ -45,6 +68,7 @@ describe("GET /search", () => {
         .expect(200)
         .then(({ body: { artworksData } }) => {
           expect(Array.isArray(artworksData)).toBe(true);
+          expect(artworksData.length).toEqual(20);
           artworksData.forEach((artwork) => {
             expect(artwork).toHaveProperty("objectID");
             expect(artwork).toHaveProperty("title");
