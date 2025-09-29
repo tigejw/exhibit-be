@@ -1,12 +1,14 @@
-exports.standardiseArtwork = function (artwork, source, onDisplay) {
-  if (source === "met") {
+const { departmentFilterToAPI } = require("./departments");
 
+exports.standardiseArtwork = function (artwork, source, localDepartmentLabel) {
+  if (source === "met") {
     return {
       source: "met",
       objectID: artwork.objectID,
       title: artwork.title || null,
       isPublicDomain: artwork.isPublicDomain,
-      department: artwork.department || null,
+      localDepartmentLabel: localDepartmentLabel || null, 
+      museumDepartment: artwork.department || null, 
       artistDisplayName: artwork.artistDisplayName || null,
       artistDisplayBio: artwork.artistDisplayBio || null,
       artistNationality: artwork.artistNationality || null,
@@ -17,13 +19,14 @@ exports.standardiseArtwork = function (artwork, source, onDisplay) {
       primaryImageSmall: artwork.primaryImageSmall || null,
       isOnView: artwork.GalleryNumber ? true : false,
     };
-  }else if (source === "chicago") {
+  } else if (source === "chicago") {
     return {
       source: "chicago",
       objectID: artwork.id,
       title: artwork.title || null,
       isPublicDomain: artwork.is_public_domain,
-      department: artwork.department_title || null,
+      localDepartmentLabel: localDepartmentLabel || null, 
+      museumDepartment: artwork.department_title || null, 
       artistDisplayName: artwork.artist_title || null,
       artistDisplayBio: artwork.artist_display || null,
       //artistnationality not provided by chicago api?

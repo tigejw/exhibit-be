@@ -24,7 +24,7 @@ describe("GET /search", () => {
   });
 
   afterAll(async () => {
-    await polly.stop(); 
+    await polly.stop();
   });
 
   test("200 responds with expected data structure (default)", () => {
@@ -130,6 +130,61 @@ describe("GET /search", () => {
     });
   });
 
+  describe("GET /search with departments filter", () => {
+    test("200 responds with only artworks from the specified department", () => {
+      return request(app)
+        .get("/search?q=monet&department=European Art")
+        .expect(200)
+        .then(({ body: { artworksData } }) => {
+          expect(Array.isArray(artworksData)).toBe(true);
+          artworksData.forEach((artwork) => {
+            expect(artwork).toHaveProperty("objectID");
+            expect(artwork).toHaveProperty("title");
+            expect(artwork.localDepartmentLabel).toBe("European Art");
+          });
+        });
+    });
+    test("200 responds with only artworks from the specified department (met)", () => {
+      return request(app)
+        .get("/search?q=monet&source=met&department=European Art")
+        .expect(200)
+        .then(({ body: { artworksData } }) => {
+          expect(Array.isArray(artworksData)).toBe(true);
+          artworksData.forEach((artwork) => {
+            expect(artwork).toHaveProperty("objectID");
+            expect(artwork).toHaveProperty("title");
+            expect(artwork.source).toBe("met");
+            expect(artwork.localDepartmentLabel).toBe("European Art");
+          });
+        });
+    });
+
+    test("200 responds with only artworks from the specified department (chicago)", () => {
+      return request(app)
+        .get("/search?q=monet&source=chicago&department=European Art")
+        .expect(200)
+        .then(({ body: { artworksData } }) => {
+          expect(Array.isArray(artworksData)).toBe(true);
+          artworksData.forEach((artwork) => {
+            expect(artwork).toHaveProperty("objectID");
+            expect(artwork).toHaveProperty("title");
+            expect(artwork.source).toBe("chicago");
+            expect(artwork.localDepartmentLabel).toBe("European Art");
+          });
+        });
+    });
+
+    test("400 responds with error for invalid department", async () => {
+      return request(app)
+        .get("/search?q=monet&department=NotARealDepartment")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body).toHaveProperty("error");
+          expect(typeof body.error).toBe("string");
+        });
+    });
+  });
+
   describe("error handling", () => {
     test("200 responds with empty array if query matches nothing", () => {
       return request(app)
@@ -147,7 +202,7 @@ describe("GET /search", () => {
         .then(({ body }) => {
           expect(body).toHaveProperty("error");
           expect(typeof body.error).toBe("string");
-          expect(body.error).toEqual("Bad request!");
+          expect(body.error).toEqual("Bad request: query");
         });
     });
   });
@@ -168,10 +223,10 @@ describe("invalid endpoints", () => {
   search endpoint should:
   
   filter by museum - only met / only chicago [done]]
-  filter by only on display
-  filter by era 
-  filter by department/genre(issues with coordinating diff/sameish departments?)
-  return uniform artwork objects from both met and chicago
+  filter by only on display [done]
+  filter by era [too complex for mvp with current apis]
+  filter by department/genre(issues with coordinating diff/sameish departments?) [done more testing though]
+  return uniform artwork objects from both met and chicago [done]
 
   endpoints endpoint!
   also want a create exhibit endpoint
