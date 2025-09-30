@@ -1,13 +1,13 @@
 const { departmentNames } = require("../utils/departments");
 const { fetchMetArtworks } = require("../models/metCall");
 const { fetchChicagoArtworks } = require("../models/chicagoCall");
-
+const sortArtworks = require("../utils/sortArtworks");
 exports.searchArtworks = async (req, res, next) => {
-  const { q, source, onDisplay, department } = req.query;
+  const { q, source, onDisplay, department, sortBy, order } = req.query;
   //bad requests checks
-    //query
+  //query
   if (!q) return res.status(400).send({ error: "Bad request: query" });
-    //onDisplay
+  //onDisplay
   if (
     onDisplay !== "true" &&
     onDisplay !== "false" &&
@@ -15,9 +15,13 @@ exports.searchArtworks = async (req, res, next) => {
   ) {
     return res.status(400).send({ error: "Bad request: onDisplay" });
   }
-    //department
+  //department
   if (department && !departmentNames.includes(department)) {
     return res.status(400).send({ error: "Bad request: department" });
+  }
+  //sortBy
+  if(sortBy && !["title","medium","artistDisplayName"].includes(sortBy)){
+    return res.status(400).send({ error: "Bad request: sort_by" });
   }
   try {
     let artworksData;
@@ -34,6 +38,12 @@ exports.searchArtworks = async (req, res, next) => {
     } else {
       return res.status(400).send({ error: "Invalid source parameter!" });
     }
+
+
+    if (sortBy) {
+      artworksData = sortArtworks(artworksData, sortBy, order);
+    }
+
     res.status(200).send({ artworksData });
   } catch (err) {
     next(err);
