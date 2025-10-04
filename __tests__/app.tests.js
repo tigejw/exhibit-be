@@ -2,14 +2,12 @@ const request = require("supertest");
 const app = require("../src/app.js");
 const endpointsJson = require("../src/endpoints.json");
 
-
 //polly setup
 const { Polly } = require("@pollyjs/core");
 const NodeHttpAdapter = require("@pollyjs/adapter-node-http");
 const FSPersister = require("@pollyjs/persister-fs");
 Polly.register(NodeHttpAdapter);
 Polly.register(FSPersister);
-
 
 describe("GET / (endpoints json)", () => {
   test("200: Responds with an object with documentation for each endpoint", () => {
@@ -22,7 +20,6 @@ describe("GET / (endpoints json)", () => {
   });
 });
 
-
 describe("GET /search", () => {
   let polly;
 
@@ -31,6 +28,7 @@ describe("GET /search", () => {
       adapters: ["node-http"],
       persister: "fs",
       recordIfMissing: true,
+      mode: "replay",
       recordFailedRequests: true,
       persisterOptions: {
         fs: { recordingsDir: `${__dirname}/../__recordings__` },
@@ -49,7 +47,7 @@ describe("GET /search", () => {
       .then(({ body: { artworksData } }) => {
         //check array
         expect(Array.isArray(artworksData)).toBe(true);
-        expect(artworksData.length).toEqual(40);
+        expect(artworksData.length).toEqual(30);
         //artwork object verification could be more thorough
         artworksData.forEach((artwork) => {
           expect(artwork).toHaveProperty("objectID");
@@ -68,7 +66,7 @@ describe("GET /search", () => {
         .expect(200)
         .then(({ body: { artworksData } }) => {
           expect(Array.isArray(artworksData)).toBe(true);
-          expect(artworksData.length).toEqual(20);
+          expect(artworksData.length).toEqual(15);
           artworksData.forEach((artwork) => {
             expect(artwork).toHaveProperty("objectID");
             expect(artwork).toHaveProperty("title");
@@ -83,7 +81,7 @@ describe("GET /search", () => {
         .expect(200)
         .then(({ body: { artworksData } }) => {
           expect(Array.isArray(artworksData)).toBe(true);
-          expect(artworksData.length).toEqual(20);
+          expect(artworksData.length).toEqual(15);
           artworksData.forEach((artwork) => {
             expect(artwork).toHaveProperty("objectID");
             expect(artwork).toHaveProperty("title");
@@ -293,6 +291,84 @@ describe("GET /search", () => {
         });
     });
   });
+
+  describe("GET /search pagination", () => {
+    test("200 responds with limited number of results per page", () => {
+      return request(app)
+        .get("/search?q=monet&limit=20&page=1")
+        .expect(200)
+        .then(({ body}) => {
+          expect(body.artworksData.length).toBe(20);
+          expect(body).toHaveProperty("totalResults");
+          expect(body).toHaveProperty("page", 1);
+          expect(body).toHaveProperty("limit", 20);
+          expect(body).toHaveProperty("hasNextPage");
+        });
+    });
+    test("200 responds with limited number for only Chicago", () => {
+      return request(app)
+        .get("/search?q=monet&limit=20&page=1&source=chicago")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.artworksData.length).toBe(20);
+          expect(body).toHaveProperty("totalResults");
+          expect(body).toHaveProperty("page", 1);
+          expect(body).toHaveProperty("limit", 20);
+          expect(body).toHaveProperty("hasNextPage");
+        });
+    });
+    test("should respond with limited number for only met", () => {
+      return request(app)
+        .get("/search?q=monet&limit=20&page=1&source=met")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.artworksData.length).toBe(20);
+          expect(body).toHaveProperty("totalResults");
+          expect(body).toHaveProperty("page", 1);
+          expect(body).toHaveProperty("limit", 20);
+          expect(body).toHaveProperty("hasNextPage");
+        });
+    });
+    test("200 responds with next page of results", async () => {
+      const { body: page1 } = await request(app)
+        .get("/search?q=monet&limit=5&page=1")
+        .expect(200);
+      const { body: page2 } = await request(app)
+        .get("/search?q=monet&limit=5&page=2")
+        .expect(200);
+      expect(page1.artworksData).not.toEqual(page2.artworksData);
+    });
+    test("200 responds with empty results for non-existent page", () => {
+      return request(app)
+        .get("/search?q=monet&limit=20&page=99999")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.artworksData).toHaveLength(0);
+          expect(body).toHaveProperty("totalResults", 325);
+          expect(body).toHaveProperty("page", 99999);
+          expect(body).toHaveProperty("limit", 20);
+          expect(body).toHaveProperty("hasNextPage", false);
+        });
+    });
+    test("400 responds with error for invalid page number", () => {
+      return request(app)
+        .get("/search?q=monet&limit=20&page=invalid")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body).toHaveProperty("error");
+          expect(typeof body.error).toBe("string");
+        });
+    });
+    test("400 responds with error for invalid page limit", () => {
+      return request(app)
+        .get("/search?q=monet&limit=-10&page=1")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body).toHaveProperty("error");
+          expect(typeof body.error).toBe("string");
+        });
+    });
+  });
 });
 describe("invalid endpoints", () => {
   test("404 responds with not found for invalid endpoint", () => {
@@ -315,7 +391,10 @@ describe("invalid endpoints", () => {
   return uniform artwork objects from both met and chicago [done]
 sort by medium, artistDisplayName, title
   endpoints endpoint!
-  also want a create exhibit endpoint
+  
+  
+  
+also want a create exhibit endpoint
   this will link to a psql data base
   add artwork to exhibit endpoint
   each artwork will need own unique identifier (museum name + code ?)
