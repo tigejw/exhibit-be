@@ -1,13 +1,13 @@
 const express = require("express");
-const searchRoutes = require("./routes/searchRoutes.js");
-
+const apiRouter = require("./routes/apiRouter.js");
 const app = express();
 app.use(express.json());
-
 const cors = require("cors");
 app.use(cors());
 
-app.use("/", searchRoutes);
+//endpoint routing
+
+app.use("/", apiRouter);
 
 //invalid url handling
 
@@ -20,10 +20,12 @@ app.use((req, res) => {
 app.use((err, req, res, next) => {
   if (err.status && err.msg) {
     res.status(err.status).send({ error: err.msg });
-  } else {
-    console.log(err, "<<< handle this");
-    res.status(500).send({ error: "Server Error!", msg: err });
-  }
+  } else next(err);
+});
+
+app.use((err, req, res, next) => {
+  console.log(err, "<<< handle this");
+  res.status(500).send({ error: "Server Error!", msg: err });
 });
 
 module.exports = app;
