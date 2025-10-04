@@ -1,64 +1,55 @@
 const departmentFilterToAPI = {
   "European Art": {
-                  "chicago": [
-                    "Applied Arts of Europe",
-                    "Painting and Sculpture of Europe"
-                  ],
-                  "met": [
-                    "European Paintings",
-                    "European Sculpture and Decorative Arts"
-                  ]
-                },
-                "Asian Art": {
-                  "chicago": ["Arts of Asia"],
-                  "met": ["Asian Art"]
-                },
-                "Greek, Roman and Byzantium Art": {
-                  "chicago": ["Arts of Greece, Rome, and the Byzantium"],
-                  "met": ["Greek and Roman Art"]
-                },
-                "Modern and Contemporary Art": {
-                  "chicago": [
-                    "Contemporary Art",
-                    "Modern Art, Modern and Contemporary Art"
-                  ],
-                  "met": ["Modern Art"]
-                },
-                "Arts of the Americas": {
-                  "chicago": ["Arts of the Americas"],
-                  "met": ["American Decorative Arts"]
-                },
-                "Ancient Near Eastern Art": {
-                  "met": ["Ancient Near Eastern Art"]
-                },
-                "Arms and Armor": { "met": ["Arms and Armor"] },
-                "Arts of Africa, Oceania, and the Americas": {
-                  "chicago": ["Arts of Africa"],
-                  "met": ["Arts of Africa, Oceania, and the Americas"]
-                },
-                "The Cloisters": { "met": ["The Cloisters"] },
-                "The Costume Institute": { "met": ["The Costume Institute"] },
-                "Drawings and Prints": {
-                  "chicago": ["Prints and Drawings"],
-                  "met": ["Drawings and Prints"]
-                },
-                "Egyptian Art": { "met": ["Egyptian Art"] },
-                "Islamic Art": { "met": ["Islamic Art"] },
-                "The Robert Lehman Collection": {
-                  "met": ["The Robert Lehman Collection"]
-                },
-                "The Libraries": { "met": ["The Libraries"] },
-                "Medieval Art": { "met": ["Medieval Art"] },
-                "Musical Instruments": { "met": ["Musical Instruments"] },
-                "Photographs": {
-                  "chicago": ["Photography and Media"],
-                  "met": ["Photographs"]
-                },
-                "Architecture and Design": {
-                  "chicago": ["Architecture and Design"]
-                },
-                "Research Center": { "chicago": ["Research Center"] },
-                "Textiles": { "chicago": ["Textiles"] }
+    chicago: ["Applied Arts of Europe", "Painting and Sculpture of Europe"],
+    met: ["European Paintings", "European Sculpture and Decorative Arts"],
+  },
+  "Asian Art": {
+    chicago: ["Arts of Asia"],
+    met: ["Asian Art"],
+  },
+  "Greek, Roman and Byzantium Art": {
+    chicago: ["Arts of Greece, Rome, and the Byzantium"],
+    met: ["Greek and Roman Art"],
+  },
+  "Modern and Contemporary Art": {
+    chicago: ["Contemporary Art", "Modern Art, Modern and Contemporary Art"],
+    met: ["Modern Art"],
+  },
+  "Arts of the Americas": {
+    chicago: ["Arts of the Americas"],
+    met: ["American Decorative Arts"],
+  },
+  "Ancient Near Eastern Art": {
+    chicago: [],
+    met: ["Ancient Near Eastern Art"],
+  },
+  "Arms and Armor": { chicago: [], met: ["Arms and Armor"] },
+  "Arts of Africa, Oceania, and the Americas": {
+    chicago: ["Arts of Africa"],
+    met: ["Arts of Africa, Oceania, and the Americas"],
+  },
+  "The Cloisters": { chicago: [], met: ["The Cloisters"] },
+  "The Costume Institute": { chicago: [], met: ["The Costume Institute"] },
+  "Drawings and Prints": {
+    chicago: ["Prints and Drawings"],
+    met: ["Drawings and Prints"],
+  },
+  "Egyptian Art": { chicago: [], met: ["Egyptian Art"] },
+  "Islamic Art": { chicago: [], met: ["Islamic Art"] },
+  "The Robert Lehman Collection": {
+    chicago: [],
+    met: ["The Robert Lehman Collection"],
+  },
+  "The Libraries": { chicago: [], met: ["The Libraries"] },
+  "Medieval Art": { chicago: [], met: ["Medieval Art"] },
+  "Musical Instruments": { met: ["Musical Instruments"] },
+  "Photographs": {
+    chicago: ["Photography and Media"],
+    met: ["Photographs"],
+  },
+  "Architecture and Design": { met: [], chicago: ["Architecture and Design"] },
+  "Research Center": { met: [], chicago: ["Research Center"] },
+  "Textiles": { met: [], chicago: ["Textiles"] },
 };
 
 const metDepartmentIDs = [
@@ -85,8 +76,20 @@ const metDepartmentIDs = [
 
 const departmentNames = Object.keys(departmentFilterToAPI);
 
+const localDepartmentLabelFromMuseumDep = (museumDepartment, source) => {
+  if (!museumDepartment) return null;
+
+  for (const key in departmentFilterToAPI) {
+    if (departmentFilterToAPI[key][source].includes(museumDepartment)) {
+      return key;
+    }
+  }
+  return null; 
+};
+
 module.exports = {
   departmentFilterToAPI,
   metDepartmentIDs,
   departmentNames,
+  localDepartmentLabelFromMuseumDep,
 };

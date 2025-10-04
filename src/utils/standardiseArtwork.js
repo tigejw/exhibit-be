@@ -1,5 +1,4 @@
-const { departmentFilterToAPI } = require("./departments");
-
+const { localDepartmentLabelFromMuseumDep } = require("./departments");
 exports.standardiseArtwork = function (artwork, source, localDepartmentLabel) {
   if (source === "met") {
     return {
@@ -7,7 +6,7 @@ exports.standardiseArtwork = function (artwork, source, localDepartmentLabel) {
       objectID: `${artwork.objectID}${source}`,
       title: artwork.title || null,
       isPublicDomain: artwork.isPublicDomain,
-      localDepartmentLabel: localDepartmentLabel || null, 
+      localDepartmentLabel: localDepartmentLabelFromMuseumDep(artwork.department, source), 
       museumDepartment: artwork.department || null, 
       artistDisplayName: artwork.artistDisplayName || null,
       artistDisplayBio: artwork.artistDisplayBio || null,
@@ -25,7 +24,7 @@ exports.standardiseArtwork = function (artwork, source, localDepartmentLabel) {
       objectID: `${artwork.id}${source}`,
       title: artwork.title || null,
       isPublicDomain: artwork.is_public_domain,
-      localDepartmentLabel: localDepartmentLabel || null, 
+      localDepartmentLabel: localDepartmentLabelFromMuseumDep(artwork.department_title, source),
       museumDepartment: artwork.department_title || null, 
       artistDisplayName: artwork.artist_title || null,
       artistDisplayBio: artwork.artist_display || null,
