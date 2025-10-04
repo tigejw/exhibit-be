@@ -206,8 +206,79 @@ describe("GET /search", () => {
         });
     });
   });
-});
 
+  describe("sortBy filter", () => {
+    test("200 responds with artworks sorted by title in ascending order", () => {
+      return request(app)
+        .get("/search?q=monet&sortBy=title&order=asc")
+        .expect(200)
+        .then(({ body: { artworksData } }) => {
+          const titles = artworksData.map((a) => a.title);
+          const sorted = [...titles].sort();
+          expect(titles).toEqual(sorted);
+        });
+    });
+    test("200 responds with artworks sorted by title in descending order", () => {
+      return request(app)
+        .get("/search?q=monet&sortBy=title&order=desc")
+        .expect(200)
+        .then(({ body: { artworksData } }) => {
+          const titles = artworksData.map((a) => a.title);
+          const sorted = [...titles].sort().reverse();
+          expect(titles).toEqual(sorted);
+        });
+    });
+    test("200 responds with artworks sorted by artistDisplayName in ascending order", () => {
+      return request(app)
+        .get("/search?q=monet&sortBy=artistDisplayName&order=asc")
+        .expect(200)
+        .then(({ body: { artworksData } }) => {
+          const names = artworksData.map((a) => a.artistDisplayName);
+          const sorted = [...names].sort();
+          expect(names).toEqual(sorted);
+        });
+    });
+    test("200 responds with artworks sorted by artistDisplayName in descending order", () => {
+      return request(app)
+        .get("/search?q=monet&sortBy=artistDisplayName&order=desc")
+        .expect(200)
+        .then(({ body: { artworksData } }) => {
+          const names = artworksData.map((a) => a.artistDisplayName);
+          const sorted = [...names].sort().reverse();
+          expect(names).toEqual(sorted);
+        });
+    });
+    test("200 responds with artworks sorted by medium in ascending order", () => {
+      return request(app)
+        .get("/search?q=monet&sortBy=medium&order=asc")
+        .expect(200)
+        .then(({ body: { artworksData } }) => {
+          const mediums = artworksData.map((a) => a.medium);
+          const sorted = [...mediums].sort();
+          expect(mediums).toEqual(sorted);
+        });
+    });
+    test("200 responds with artworks sorted by medium in descending order", () => {
+      return request(app)
+        .get("/search?q=monet&sortBy=medium&order=desc")
+        .expect(200)
+        .then(({ body: { artworksData } }) => {
+          const mediums = artworksData.map((a) => a.medium);
+          const sorted = [...mediums].sort().reverse();
+          expect(mediums).toEqual(sorted);
+        });
+    });
+    test("400 responds with error for invalid sortBy value", () => {
+      return request(app)
+        .get("/search?q=monet&sortBy=invalidSortBy")
+        .expect(400)
+        .then(({ body }) => {
+          expect(body).toHaveProperty("error");
+          expect(typeof body.error).toBe("string");
+        });
+    });
+  });
+});
 describe("invalid endpoints", () => {
   test("404 responds with not found for invalid endpoint", () => {
     return request(app)
@@ -227,12 +298,12 @@ describe("invalid endpoints", () => {
   filter by era [too complex for mvp with current apis]
   filter by department/genre(issues with coordinating diff/sameish departments?) [done more testing though]
   return uniform artwork objects from both met and chicago [done]
-
+sort by medium, artistDisplayName, title
   endpoints endpoint!
   also want a create exhibit endpoint
   this will link to a psql data base
   add artwork to exhibit endpoint
-  each artwork will need own unique identifier (muesum name + code ?)
+  each artwork will need own unique identifier (museum name + code ?)
   a return exhibit endpoint
   remove artwork endpoint
   
