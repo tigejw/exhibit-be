@@ -1,12 +1,27 @@
-/** @jest-environment setup-polly-jest/jest-environment-node */
+const request = require("supertest");
+const app = require("../src/app.js");
+const endpointsJson = require("../src/endpoints.json");
+
+
+//polly setup
 const { Polly } = require("@pollyjs/core");
 const NodeHttpAdapter = require("@pollyjs/adapter-node-http");
 const FSPersister = require("@pollyjs/persister-fs");
 Polly.register(NodeHttpAdapter);
 Polly.register(FSPersister);
-const path = require("path");
-const request = require("supertest");
-const app = require("../src/app.js");
+
+
+describe("GET / (endpoints json)", () => {
+  test("200: Responds with an object with documentation for each endpoint", () => {
+    return request(app)
+      .get("/")
+      .expect(200)
+      .then(({ body: { endpoints } }) => {
+        expect(endpoints).toEqual(endpointsJson);
+      });
+  });
+});
+
 
 describe("GET /search", () => {
   let polly;
@@ -18,7 +33,7 @@ describe("GET /search", () => {
       recordIfMissing: true,
       recordFailedRequests: true,
       persisterOptions: {
-        fs: { recordingsDir: path.resolve(__dirname, "../__recordings__") },
+        fs: { recordingsDir: `${__dirname}/../__recordings__` },
       },
     });
   });

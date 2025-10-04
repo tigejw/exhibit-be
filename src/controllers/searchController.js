@@ -1,6 +1,6 @@
 const { departmentNames } = require("../utils/departments");
-const { fetchMetArtworks } = require("../models/metCall");
-const { fetchChicagoArtworks } = require("../models/chicagoCall");
+const { fetchMetArtworks } = require("../models/metApiModel");
+const { fetchChicagoArtworks } = require("../models/chicagoApiModel");
 const sortArtworks = require("../utils/sortArtworks");
 exports.searchArtworks = async (req, res, next) => {
   const { q, source, onDisplay, department, sortBy, order } = req.query;
