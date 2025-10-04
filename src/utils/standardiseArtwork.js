@@ -4,7 +4,7 @@ exports.standardiseArtwork = function (artwork, source, localDepartmentLabel) {
   if (source === "met") {
     return {
       source: "met",
-      objectID: artwork.objectID,
+      objectID: `${artwork.objectID}${source}`,
       title: artwork.title || null,
       isPublicDomain: artwork.isPublicDomain,
       localDepartmentLabel: localDepartmentLabel || null, 
@@ -22,7 +22,7 @@ exports.standardiseArtwork = function (artwork, source, localDepartmentLabel) {
   } else if (source === "chicago") {
     return {
       source: "chicago",
-      objectID: artwork.id,
+      objectID: `${artwork.id}${source}`,
       title: artwork.title || null,
       isPublicDomain: artwork.is_public_domain,
       localDepartmentLabel: localDepartmentLabel || null, 

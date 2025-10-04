@@ -1,0 +1,5 @@
+ artwork_id | source | objectid  |    title     | ispublicdomain | localdepartmentlabel |  museumdepartment  | artistdisplayname |        artistdisplaybio         | artistnationality | objectdate |    medium     |              dimensions              |                         primaryimage                          |                       primaryimagesmall                        | isonview 
+------------+--------+-----------+--------------+----------------+----------------------+--------------------+-------------------+---------------------------------+-------------------+------------+---------------+--------------------------------------+---------------------------------------------------------------+----------------------------------------------------------------+----------
+          1 | met    | 437133met | Water Lilies | t              | European Paintings   | European Paintings | Claude Monet      | French, Paris 1840-1926 Giverny | French            | 1906       | Oil on canvas | 39 3/4 x 79 1/4 in. (101 x 201.3 cm) | https://images.metmuseum.org/CRDImages/ep/original/DT1567.jpg | https://images.metmuseum.org/CRDImages/ep/web-large/DT1567.jpg | t
+(1 row)
+
