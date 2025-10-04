@@ -75,6 +75,9 @@ exports.searchArtworks = async (req, res, next) => {
     } else if (!source || source === "") {
       const perApiLimit = limit / 2;
       //need to track offset when one api fills deficit of other
+      //return deficit number, negative or positive, negative means x extra from met, positive means extra from chicago
+      //consider in next iteration of page
+      //post mvp
       const [metResults, chicagoResults] = await Promise.all([
         fetchMetArtworks(q, onDisplay, department, perApiLimit, page),
         fetchChicagoArtworks(q, onDisplay, department, perApiLimit, page),

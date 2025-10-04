@@ -389,8 +389,9 @@ describe("invalid endpoints", () => {
   filter by era [too complex for mvp with current apis]
   filter by department/genre(issues with coordinating diff/sameish departments?) [done more testing though]
   return uniform artwork objects from both met and chicago [done]
-sort by medium, artistDisplayName, title
-  endpoints endpoint!
+sort by medium, artistDisplayName, title [done]
+  endpoints endpoint! [done]
+  pagination [done but with deficit]
   
   
   
