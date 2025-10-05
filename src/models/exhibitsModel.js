@@ -1,12 +1,14 @@
 const db = require("../../db/connection");
+const toCamel = require("../utils/toCamel");
 
 exports.fetchExhibits = () => {
-  return db
-  //returns random thumbnail from one of the artworks in the exhibit
-  //can refactor later to be an actual column in the exhibits table 
-  //which can be chosen by user/edited
-    .query(
-      `SELECT exhibits.*, 
+  return (
+    db
+      //returns random thumbnail from one of the artworks in the exhibit
+      //can refactor later to be an actual column in the exhibits table
+      //which can be chosen by user/edited
+      .query(
+        `SELECT exhibits.*, 
       (
         SELECT artworks.primaryImageSmall
         FROM exhibit_artworks
@@ -16,8 +18,72 @@ exports.fetchExhibits = () => {
         LIMIT 1
       ) AS thumbnail
     FROM exhibits;`
-    )
-    .then((result) => {
-      return result.rows;
-    });
+      )
+      .then((result) => {
+        return result.rows;
+      })
+  );
+};
+
+exports.insertArtworkByExhibit = async (exhibit_id, artwork) => {
+  const { objectID } = artwork;
+
+  //check if artwork already exists in db
+  const { rows: returnedExistingArtwork } = await db.query(
+    `SELECT * FROM artworks WHERE objectID = $1;`,
+    [objectID]
+  );
+
+  //insert if not
+  let returnedArtwork;
+  if (returnedExistingArtwork.length === 0) {
+    const { rows } = await db.query(
+      `INSERT INTO artworks (
+        objectID, source, title, isPublicDomain, localDepartmentLabel, museumDepartment,
+        artistDisplayName, artistDisplayBio, artistNationality, objectDate, medium,
+        dimensions, primaryImage, primaryImageSmall, isOnView
+      ) VALUES (
+        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15
+      ) RETURNING *;`,
+      [
+        artwork.objectID,
+        artwork.source,
+        artwork.title,
+        artwork.isPublicDomain,
+        artwork.localDepartmentLabel,
+        artwork.museumDepartment,
+        artwork.artistDisplayName,
+        artwork.artistDisplayBio,
+        artwork.artistNationality,
+        artwork.objectDate,
+        artwork.medium,
+        artwork.dimensions,
+        artwork.primaryImage,
+        artwork.primaryImageSmall,
+        artwork.isOnView,
+      ]
+    );
+    returnedArtwork = rows[0];
+  } else {
+    returnedArtwork = returnedExistingArtwork[0];
+  }
+
+  //check if artwork already in exhibit
+  const { rows: returnedExhibitArtworkLink } = await db.query(
+    `SELECT * FROM exhibit_artworks WHERE exhibit_id = $1 AND artwork_id = $2;`,
+    [exhibit_id, returnedArtwork.artwork_id]
+  );
+  if (returnedExhibitArtworkLink.length > 0) {
+    return Promise.reject({ status: 409, msg: "artwork already in exhibit" });
+  }
+
+  //link artwork to exhibit
+  await db.query(
+    `INSERT INTO exhibit_artworks (exhibit_id, artwork_id) VALUES ($1, $2) ON CONFLICT DO NOTHING;`,
+    [exhibit_id, returnedArtwork.artwork_id]
+  );
+  return toCamel({
+    exhibit_id: Number(exhibit_id),
+    ...returnedArtwork,
+  });
 };

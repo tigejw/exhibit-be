@@ -74,6 +74,23 @@ module.exports = {
       primaryImage: 'https://images.metmuseum.org/CRDImages/ep/original/DT1946.jpg',
       primaryImageSmall: 'https://images.metmuseum.org/CRDImages/ep/web-large/DT1946.jpg',
       isOnView: true
+    },
+     {
+      source: 'met',
+      objectID: '436530met',
+      title: 'Oleanders',
+      isPublicDomain: true,
+      localDepartmentLabel: 'European Art',
+      museumDepartment: 'European Paintings',
+      artistDisplayName: 'Vincent van Gogh',
+      artistDisplayBio: 'Dutch, Zundert 1853–1890 Auvers-sur-Oise',
+      artistNationality: 'Dutch',
+      objectDate: '1888',
+      medium: 'Oil on canvas',
+      dimensions: '23 3/4 x 29 in. (60.3 x 73.7 cm)',
+      primaryImage: 'https://images.metmuseum.org/CRDImages/ep/original/DT1494.jpg',
+      primaryImageSmall: 'https://images.metmuseum.org/CRDImages/ep/web-large/DT1494.jpg',
+      isOnView: true
     }
   ],
   //refactor to use ids not titles

@@ -2,6 +2,8 @@ const request = require("supertest");
 const app = require("../src/app.js");
 const endpointsJson = require("../src/endpoints.json");
 const db = require("../db/connection");
+const seed = require("../db/seeds/seed");
+const seedData = require("../db/data/development-data/index.js");
 
 //polly setup
 const { Polly } = require("@pollyjs/core");
@@ -13,6 +15,10 @@ Polly.register(FSPersister);
 //large api calls to met api will cause 503 errors
 //build up polly recordings using batch testing with .only
 //then run full test suite without .only
+
+beforeEach(() => {
+  return seed(seedData);
+});
 
 afterAll(() => {
   return db.end();
@@ -428,7 +434,192 @@ describe("GET /exhibits", () => {
   });
 });
 
-
+describe("POST /exhibits/:exhibit_id/artwork", () => {
+  test("201 responds with added artwork", () => {
+    return request(app)
+      .post("/exhibits/1/artwork")
+      .send({
+        source: "met",
+        objectID: "436524met",
+        title: "Sunflowers",
+        isPublicDomain: true,
+        localDepartmentLabel: "European Art",
+        museumDepartment: "European Paintings",
+        artistDisplayName: "Vincent van Gogh",
+        artistDisplayBio: "Dutch, Zundert 1853–1890 Auvers-sur-Oise",
+        artistNationality: "Dutch",
+        objectDate: "1887",
+        medium: "Oil on canvas",
+        dimensions: "17 x 24 in. (43.2 x 61 cm)",
+        primaryImage:
+          "https://images.metmuseum.org/CRDImages/ep/original/DP229743.jpg",
+        primaryImageSmall:
+          "https://images.metmuseum.org/CRDImages/ep/web-large/DP229743.jpg",
+        isOnView: true,
+      })
+      .expect(201)
+      .then(({ body }) => {
+        expect(body).toHaveProperty("artwork");
+        expect(body.artwork).toEqual(
+          expect.objectContaining({
+            exhibit_id: 1,
+            artwork_id: expect.any(Number),
+            source: "met",
+            objectID: "436524met",
+            title: "Sunflowers",
+            isPublicDomain: true,
+            localDepartmentLabel: "European Art",
+            museumDepartment: "European Paintings",
+            artistDisplayName: "Vincent van Gogh",
+            artistDisplayBio: "Dutch, Zundert 1853–1890 Auvers-sur-Oise",
+            artistNationality: "Dutch",
+            objectDate: "1887",
+            medium: "Oil on canvas",
+            dimensions: "17 x 24 in. (43.2 x 61 cm)",
+            primaryImage:
+              "https://images.metmuseum.org/CRDImages/ep/original/DP229743.jpg",
+            primaryImageSmall:
+              "https://images.metmuseum.org/CRDImages/ep/web-large/DP229743.jpg",
+            isOnView: true,
+          })
+        );
+      });
+  });
+  test("201 add an artwork to exhibit that already exists in artwork db", () => {
+    return request(app)
+      .post("/exhibits/1/artwork")
+      .send({
+        source: "met",
+        objectID: "436530met",
+        title: "Oleanders",
+        isPublicDomain: true,
+        localDepartmentLabel: "European Art",
+        museumDepartment: "European Paintings",
+        artistDisplayName: "Vincent van Gogh",
+        artistDisplayBio: "Dutch, Zundert 1853–1890 Auvers-sur-Oise",
+        artistNationality: "Dutch",
+        objectDate: "1888",
+        medium: "Oil on canvas",
+        dimensions: "23 3/4 x 29 in. (60.3 x 73.7 cm)",
+        primaryImage:
+          "https://images.metmuseum.org/CRDImages/ep/original/DT1494.jpg",
+        primaryImageSmall:
+          "https://images.metmuseum.org/CRDImages/ep/web-large/DT1494.jpg",
+        isOnView: true,
+      })
+      .expect(201)
+      .then(({ body }) => {
+        expect(body).toHaveProperty("artwork");
+        expect(body.artwork).toEqual(
+          expect.objectContaining({
+            exhibit_id: 1,
+            artwork_id: expect.any(Number),
+            source: "met",
+            objectID: "436530met",
+            title: "Oleanders",
+            isPublicDomain: true,
+            localDepartmentLabel: "European Art",
+            museumDepartment: "European Paintings",
+            artistDisplayName: "Vincent van Gogh",
+            artistDisplayBio: "Dutch, Zundert 1853–1890 Auvers-sur-Oise",
+            artistNationality: "Dutch",
+            objectDate: "1888",
+            medium: "Oil on canvas",
+            dimensions: "23 3/4 x 29 in. (60.3 x 73.7 cm)",
+            primaryImage:
+              "https://images.metmuseum.org/CRDImages/ep/original/DT1494.jpg",
+            primaryImageSmall:
+              "https://images.metmuseum.org/CRDImages/ep/web-large/DT1494.jpg",
+            isOnView: true,
+          })
+        );
+      });
+  });
+  test("409 responds with error if artwork already in exhibit", () => {
+    return request(app)
+      .post("/exhibits/1/artwork")
+      .send({
+        source: "met",
+        objectID: "437133met",
+        title: "Water Lilies",
+        isPublicDomain: true,
+        localDepartmentLabel: "European Paintings",
+        museumDepartment: "European Paintings",
+        artistDisplayName: "Claude Monet",
+        artistDisplayBio: "French, Paris 1840-1926 Giverny",
+        artistNationality: "French",
+        objectDate: "1906",
+        medium: "Oil on canvas",
+        dimensions: "39 3/4 x 79 1/4 in. (101 x 201.3 cm)",
+        primaryImage:
+          "https://images.metmuseum.org/CRDImages/ep/original/DT1567.jpg",
+        primaryImageSmall:
+          "https://images.metmuseum.org/CRDImages/ep/web-large/DT1567.jpg",
+        isOnView: true,
+      })
+      .expect(409)
+      .then(({ body }) => {
+        expect(body).toHaveProperty("error");
+        expect(typeof body.error).toBe("string");
+      });
+  });
+  test("400 responds with error for invalid exhibit_id", () => {
+    return request(app)
+      .post("/exhibits/9999/artwork")
+      .send({
+        source: "met",
+        objectID: "436524met",
+        title: "Sunflowers",
+        isPublicDomain: true,
+        localDepartmentLabel: "European Art",
+        museumDepartment: "European Paintings",
+        artistDisplayName: "Vincent van Gogh",
+        artistDisplayBio: "Dutch, Zundert 1853–1890 Auvers-sur-Oise",
+        artistNationality: "Dutch",
+        objectDate: "1887",
+        medium: "Oil on canvas",
+        dimensions: "17 x 24 in. (43.2 x 61 cm)",
+        primaryImage:
+          "https://images.metmuseum.org/CRDImages/ep/original/DP229743.jpg",
+        primaryImageSmall:
+          "https://images.metmuseum.org/CRDImages/ep/web-large/DP229743.jpg",
+        isOnView: true,
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body).toHaveProperty("error");
+        expect(typeof body.error).toBe("string");
+      });
+  });
+  test("400 responds with error for missing required artwork fields", () => {
+    return request(app)
+      .post("/exhibits/1/artwork")
+      .send({
+        source: "met",
+        objectID: "436524met",
+        //title: "Sunflowers",
+        isPublicDomain: true,
+        localDepartmentLabel: "European Art",
+        museumDepartment: "European Paintings",
+        artistDisplayName: "Vincent van Gogh",
+        artistDisplayBio: "Dutch, Zundert 1853–1890 Auvers-sur-Oise",
+        artistNationality: "Dutch",
+        objectDate: "1887",
+        medium: "Oil on canvas",
+        dimensions: "17 x 24 in. (43.2 x 61 cm)",
+        primaryImage:
+          "https://images.metmuseum.org/CRDImages/ep/original/DP229743.jpg",
+        primaryImageSmall:
+          "https://images.metmuseum.org/CRDImages/ep/web-large/DP229743.jpg",
+        isOnView: true,
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body).toHaveProperty("error");
+        expect(typeof body.error).toBe("string");
+      });
+  });
+});
 
 /*
   search endpoint should:
