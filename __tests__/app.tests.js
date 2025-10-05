@@ -640,10 +640,15 @@ also want a create exhibit endpoint
   add artwork to exhibit endpoint
   each artwork will need own unique identifier (museum name + code ?)
   a return exhibit endpoint
-  remove artwork endpoint
-  
+  remove artwork endpoint 
   think about exhibit object
   title? author?
   then arrays of relevant artworks
   ordering? or random for mvp
+
+  Get/exhibits [done]
+  Post/exhibits/:exhibit_id/artwork [done]
+  Get/exhibits/:exhibit_id 
+  Delete/exhibits/:exhibit_id/artwork/:artwork_id 
+  
 */
