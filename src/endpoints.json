@@ -16,137 +16,130 @@
   },
   "GET /search": {
     "description": "responds with relevant artworks",
-    "queries": ["query", "sortBy"],
-    "exampleResponse": {
-      "endpoints": {
-        "GET /search": {
-          "description": "searches for a specific endpoint",
-          "queries": {
-            "q": "the search query",
-            "source": [
-              "museum apis to search",
-              { "the met museum": "met", "art institute of chicago": "chicago" }
+    "queries": {
+      "q": "the query/keyword that you want to search for",
+      "source": [
+        "museum apis to search - leave empty for both",
+        { "met": "the met museum", "chicago": "the art institute of chicago" }
+      ],
+      "onDisplay": "boolean to filter by artworks currently on display",
+      "department": [
+        "the standardised departments to filter by, see following object for more detail about specific departments that will be accessed",
+        {
+          "European Art": {
+            "chicago": [
+              "Applied Arts of Europe",
+              "Painting and Sculpture of Europe"
             ],
-            "onDisplay": "boolean",
-            "department": [
-              "the department to filter by",
-              {
-                "European Art": {
-                  "chicago": [
-                    "Applied Arts of Europe",
-                    "Painting and Sculpture of Europe"
-                  ],
-                  "met": [
-                    "European Paintings",
-                    "European Sculpture and Decorative Arts"
-                  ]
-                },
-                "Asian Art": {
-                  "chicago": ["Arts of Asia"],
-                  "met": ["Asian Art"]
-                },
-                "Greek, Roman and Byzantium Art": {
-                  "chicago": ["Arts of Greece, Rome, and the Byzantium"],
-                  "met": ["Greek and Roman Art"]
-                },
-                "Modern and Contemporary Art": {
-                  "chicago": [
-                    "Contemporary Art",
-                    "Modern Art, Modern and Contemporary Art"
-                  ],
-                  "met": ["Modern Art"]
-                },
-                "Arts of the Americas": {
-                  "chicago": ["Arts of the Americas"],
-                  "met": ["American Decorative Arts"]
-                },
-                "Ancient Near Eastern Art": {
-                  "met": ["Ancient Near Eastern Art"]
-                },
-                "Arms and Armor": { "met": ["Arms and Armor"] },
-                "Arts of Africa, Oceania, and the Americas": {
-                  "chicago": ["Arts of Africa"],
-                  "met": ["Arts of Africa, Oceania, and the Americas"]
-                },
-                "The Cloisters": { "met": ["The Cloisters"] },
-                "The Costume Institute": { "met": ["The Costume Institute"] },
-                "Drawings and Prints": {
-                  "chicago": ["Prints and Drawings"],
-                  "met": ["Drawings and Prints"]
-                },
-                "Egyptian Art": { "met": ["Egyptian Art"] },
-                "Islamic Art": { "met": ["Islamic Art"] },
-                "The Robert Lehman Collection": {
-                  "met": ["The Robert Lehman Collection"]
-                },
-                "The Libraries": { "met": ["The Libraries"] },
-                "Medieval Art": { "met": ["Medieval Art"] },
-                "Musical Instruments": { "met": ["Musical Instruments"] },
-                "Photographs": {
-                  "chicago": ["Photography and Media"],
-                  "met": ["Photographs"]
-                },
-                "Architecture and Design": {
-                  "chicago": ["Architecture and Design"]
-                },
-                "Research Center": { "chicago": ["Research Center"] },
-                "Textiles": { "chicago": ["Textiles"] }
-              }
-            ],
-            "sortBy": [
-              "the field to sort by",
-              {
-                "title": "title",
-                "medium": "medium",
-                "artistDisplayName": "artistDisplayName"
-              }
-            ],
-            "order": "the sort order (asc or desc)",
-            "limit": "number of results to return, default 15 for single api calls 30 for dual api calls",
-            "page": "the page of results to return, default 1"
-          },
-          "exampleResponse": {
-            "artworks": [
-              {
-                "source": "met",
-                "objectID": 436536,
-                "title": "Women Picking Olives",
-                "isPublicDomain": true,
-                "localDepartmentLabel": null,
-                "museumDepartment": "European Paintings",
-                "artistDisplayName": "Vincent van Gogh",
-                "artistDisplayBio": "Dutch, Zundert 1853–1890 Auvers-sur-Oise",
-                "artistNationality": "Dutch",
-                "objectDate": "1889",
-                "medium": "Oil on canvas",
-                "dimensions": "28 5/8 x 36 in. (72.7 x 91.4 cm)",
-                "primaryImage": "https://images.metmuseum.org/CRDImages/ep/original/DP-17161-001.jpg",
-                "primaryImageSmall": "https://images.metmuseum.org/CRDImages/ep/web-large/DP-17161-001.jpg",
-                "isOnView": true
-              },
-              {
-                "source": "chicago",
-                "objectID": 20545,
-                "title": "Rocks at Port-Goulphar, Belle-Île",
-                "isPublicDomain": true,
-                "localDepartmentLabel": "European Art",
-                "museumDepartment": "Painting and Sculpture of Europe",
-                "artistDisplayName": "Claude Monet",
-                "artistDisplayBio": "Claude Monet (French, 1840–1926)",
-                "artistNationality": "France",
-                "objectDate": "1886",
-                "medium": "Oil on canvas",
-                "dimensions": "66 × 81.8 cm (26 × 32 3/16 in.); Framed: 83.9 × 100.4 × 9.9 cm (33 × 39 1/2 × 3 7/8 in.)",
-                "primaryImage": "https://www.artic.edu/iiif/2/2765aee9-3d78-ec6c-5c66-a1d9dc8173f6/full/843,/0/default.jpg",
-                "primaryImageSmall": "https://www.artic.edu/iiif/2/2765aee9-3d78-ec6c-5c66-a1d9dc8173f6/full/200,/0/default.jpg",
-                "isOnView": false
-              }
+            "met": [
+              "European Paintings",
+              "European Sculpture and Decorative Arts"
             ]
-          }
+          },
+          "Asian Art": {
+            "chicago": ["Arts of Asia"],
+            "met": ["Asian Art"]
+          },
+          "Greek, Roman and Byzantium Art": {
+            "chicago": ["Arts of Greece, Rome, and the Byzantium"],
+            "met": ["Greek and Roman Art"]
+          },
+          "Modern and Contemporary Art": {
+            "chicago": [
+              "Contemporary Art",
+              "Modern Art, Modern and Contemporary Art"
+            ],
+            "met": ["Modern Art"]
+          },
+          "Arts of the Americas": {
+            "chicago": ["Arts of the Americas"],
+            "met": ["American Decorative Arts"]
+          },
+          "Ancient Near Eastern Art": {
+            "met": ["Ancient Near Eastern Art"]
+          },
+          "Arms and Armor": { "met": ["Arms and Armor"] },
+          "Arts of Africa, Oceania, and the Americas": {
+            "chicago": ["Arts of Africa"],
+            "met": ["Arts of Africa, Oceania, and the Americas"]
+          },
+          "The Cloisters": { "met": ["The Cloisters"] },
+          "The Costume Institute": { "met": ["The Costume Institute"] },
+          "Drawings and Prints": {
+            "chicago": ["Prints and Drawings"],
+            "met": ["Drawings and Prints"]
+          },
+          "Egyptian Art": { "met": ["Egyptian Art"] },
+          "Islamic Art": { "met": ["Islamic Art"] },
+          "The Robert Lehman Collection": {
+            "met": ["The Robert Lehman Collection"]
+          },
+          "The Libraries": { "met": ["The Libraries"] },
+          "Medieval Art": { "met": ["Medieval Art"] },
+          "Musical Instruments": { "met": ["Musical Instruments"] },
+          "Photographs": {
+            "chicago": ["Photography and Media"],
+            "met": ["Photographs"]
+          },
+          "Architecture and Design": {
+            "chicago": ["Architecture and Design"]
+          },
+          "Research Center": { "chicago": ["Research Center"] },
+          "Textiles": { "chicago": ["Textiles"] }
         }
-      }
+      ],
+      "sortBy": [
+        "the field to sort by",
+        {
+          "title": "alphabetical by title",
+          "medium": "alphabetical by medium",
+          "artistDisplayName": "alphabetical by artistDisplayName"
+        }
+      ],
+      "order": "the sort order (asc or desc)",
+      "limit": "number of results to return, default 15 for single api calls 30 for dual api calls",
+      "page": "the page of results to return, default 1"
+    },
+    "exampleResponse": {
+      "artworks": [
+        {
+          "source": "met",
+          "objectID": 436536,
+          "title": "Women Picking Olives",
+          "isPublicDomain": true,
+          "localDepartmentLabel": null,
+          "museumDepartment": "European Paintings",
+          "artistDisplayName": "Vincent van Gogh",
+          "artistDisplayBio": "Dutch, Zundert 1853–1890 Auvers-sur-Oise",
+          "artistNationality": "Dutch",
+          "objectDate": "1889",
+          "medium": "Oil on canvas",
+          "dimensions": "28 5/8 x 36 in. (72.7 x 91.4 cm)",
+          "primaryImage": "https://images.metmuseum.org/CRDImages/ep/original/DP-17161-001.jpg",
+          "primaryImageSmall": "https://images.metmuseum.org/CRDImages/ep/web-large/DP-17161-001.jpg",
+          "isOnView": true
+        },
+        {
+          "source": "chicago",
+          "objectID": 20545,
+          "title": "Rocks at Port-Goulphar, Belle-Île",
+          "isPublicDomain": true,
+          "localDepartmentLabel": "European Art",
+          "museumDepartment": "Painting and Sculpture of Europe",
+          "artistDisplayName": "Claude Monet",
+          "artistDisplayBio": "Claude Monet (French, 1840–1926)",
+          "artistNationality": "France",
+          "objectDate": "1886",
+          "medium": "Oil on canvas",
+          "dimensions": "66 × 81.8 cm (26 × 32 3/16 in.); Framed: 83.9 × 100.4 × 9.9 cm (33 × 39 1/2 × 3 7/8 in.)",
+          "primaryImage": "https://www.artic.edu/iiif/2/2765aee9-3d78-ec6c-5c66-a1d9dc8173f6/full/843,/0/default.jpg",
+          "primaryImageSmall": "https://www.artic.edu/iiif/2/2765aee9-3d78-ec6c-5c66-a1d9dc8173f6/full/200,/0/default.jpg",
+          "isOnView": false
+        }
+      ]
     }
   },
+
   "GET /exhibits": {
     "description": "responds with all exhibits including a random thumbnail from each exhibits collection",
     "queries": [],
@@ -190,6 +183,40 @@
       "primaryImage": "https://images.metmuseum.org/CRDImages/ep/original/DP-17161-001.jpg",
       "primaryImageSmall": "https://images.metmuseum.org/CRDImages/ep/web-large/DP-17161-001.jpg",
       "isOnView": true
+    }
+  },
+  "GET /exhibits/:exhibit_id": {
+    "description": "responds with the specified exhibit including all artworks in that exhibit",
+    "queries": [],
+    "exampleResponse": {
+      "exhibit": {
+        "exhibit_id": 1,
+        "thumbnail": "https://example.com/cat_thumbnail.jpg",
+        "title": "my favourite cat photos",
+        "description": "meowmeow!",
+        "created_at": "2023-10-01T12:00:00Z",
+        "artworks": [
+          {
+            "exhibit_id": 1,
+            "artwork_id": 4,
+            "source": "met",
+            "objectID": "437998met",
+            "title": "Olive Trees",
+            "isPublicDomain": true,
+            "localDepartmentLabel": "European Paintings",
+            "museumDepartment": "European Paintings",
+            "artistDisplayName": "Vincent van Gogh",
+            "artistDisplayBio": "Dutch, Zundert 1853–1890 Auvers-sur-Oise",
+            "artistNationality": "Dutch",
+            "objectDate": "1889",
+            "medium": "Oil on canvas",
+            "dimensions": "28 5/8 x 36 1/4 in. (72.7 x 92.1 cm)",
+            "primaryImage": "https://images.metmuseum.org/CRDImages/ep/original/DT1946.jpg",
+            "primaryImageSmall": "https://images.metmuseum.org/CRDImages/ep/web-large/DT1946.jpg",
+            "isOnView": true
+          }
+        ]
+      }
     }
   }
 }

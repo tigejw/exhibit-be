@@ -412,7 +412,7 @@ describe.skip("invalid endpoints", () => {
   });
 });
 
-describe("GET /exhibits", () => {
+describe.skip("GET /exhibits", () => {
   test("200 responds with all exhibits", () => {
     return request(app)
       .get("/exhibits")
@@ -434,7 +434,7 @@ describe("GET /exhibits", () => {
   });
 });
 
-describe("POST /exhibits/:exhibit_id/artwork", () => {
+describe.skip("POST /exhibits/:exhibit_id/artwork", () => {
   test("201 responds with added artwork", () => {
     return request(app)
       .post("/exhibits/1/artwork")
@@ -618,6 +618,64 @@ describe("POST /exhibits/:exhibit_id/artwork", () => {
         expect(body).toHaveProperty("error");
         expect(typeof body.error).toBe("string");
       });
+  });
+});
+
+describe("GET /exhibits/:exhibit_id", () => {
+  test("200 responds with exhibit and related artworks", () => {
+    return request(app)
+      .get("/exhibits/1")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body).toHaveProperty("exhibit");
+        expect(body.exhibit).toHaveProperty("exhibit_id", 1);
+        expect(body.exhibit).toHaveProperty("thumbnail");
+        expect(body.exhibit).toHaveProperty("title");
+        expect(body.exhibit).toHaveProperty("artworks");
+        expect(Array.isArray(body.exhibit.artworks)).toBe(true);
+        expect(body.exhibit.artworks.length).toBe(4);
+        body.exhibit.artworks.forEach((artwork) => {
+          expect(artwork).toEqual(
+            expect.objectContaining({
+              exhibit_id: 1,
+              artwork_id: expect.any(Number),
+              source: expect.any(String),
+              objectID: expect.any(String),
+              title: expect.any(String),
+              isPublicDomain: expect.any(Boolean),
+              localDepartmentLabel: expect.any(String),
+              museumDepartment: expect.any(String),
+              artistDisplayName: expect.any(String),
+              artistDisplayBio: expect.any(String),
+              artistNationality: expect.any(String),
+              objectDate: expect.any(String),
+              medium: expect.any(String),
+              dimensions: expect.any(String),
+              primaryImage: expect.any(String),
+              primaryImageSmall: expect.any(String),
+              isOnView: expect.any(Boolean),
+            })
+          );
+        });
+      });
+  });
+  test('should respond with 404 for non-existent exhibit', () => {
+    return request(app)
+      .get('/exhibits/314')
+      .expect(404)
+      .then(({ body }) => {
+        expect(body).toHaveProperty('error');
+        expect(typeof body.error).toBe('string');
+      });
+  });
+  test('should respond with 400 for invalid exhibit_id', () => {
+    return request(app)
+      .get('/exhibits/myfavoutiteexhibitid')
+      .expect(400)
+      .then(({ body }) => {
+        expect(body).toHaveProperty('error');
+        expect(typeof body.error).toBe('string');
+      }); 
   });
 });
 

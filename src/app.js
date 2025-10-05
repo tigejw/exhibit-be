@@ -17,7 +17,7 @@ app.use((req, res) => {
 
 //error handling middleware
 app.use((err, req, res, next) => {
-  if (err.code === "23503" || err.code === "23502") {
+  if (err.code === "23503" || err.code === "23502" || err.code === "22P02") {
     res.status(400).send({ error: "Bad request! Either artwork object or exhibit ID is invalid." });
   } else next(err);
 });

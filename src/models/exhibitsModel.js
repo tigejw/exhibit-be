@@ -24,7 +24,7 @@ exports.fetchExhibits = () => {
       })
   );
 };
-
+//async bc struggling w nested .thens
 exports.insertArtworkByExhibit = async (exhibit_id, artwork) => {
   const { objectID } = artwork;
 
@@ -86,4 +86,50 @@ exports.insertArtworkByExhibit = async (exhibit_id, artwork) => {
     exhibit_id: Number(exhibit_id),
     ...returnedArtwork,
   });
+};
+
+exports.fetchExhibitById = (exhibit_id) => {
+ return db
+    .query(`SELECT * FROM exhibits WHERE exhibit_id = $1;`, [exhibit_id])
+    .then(({ rows }) => {
+      if (rows.length === 0) {
+        return Promise.reject({ status: 404, msg: "exhibit not found" });
+      }
+      return rows[0];
+    })
+    .then((exhibit) => {
+      return db
+        .query(
+          `SELECT exhibit_artworks.exhibit_id, artworks.*
+           FROM exhibit_artworks
+           JOIN artworks ON exhibit_artworks.artwork_id = artworks.artwork_id
+           WHERE exhibit_artworks.exhibit_id = $1;`,
+          [exhibit.exhibit_id]
+        )
+        .then(({ rows }) => {
+          //thumbnail from one of artworks logic
+          return db
+            .query(
+              `SELECT artworks.primaryImageSmall
+               FROM exhibit_artworks
+               JOIN artworks ON exhibit_artworks.artwork_id = artworks.artwork_id
+               WHERE exhibit_artworks.exhibit_id = $1
+               ORDER BY RANDOM()
+               LIMIT 1;`,
+              [exhibit.exhibit_id]
+            )
+            .then(({ rows: thumbnailRows }) => {
+              const thumbnail =
+                thumbnailRows.length > 0 ? thumbnailRows[0].primaryimagesmall : null;
+              return {
+                thumbnail,
+                artworks: rows.map(toCamel),
+                ...exhibit,
+              };
+            });
+        });
+    })
+    .then((exhibitWithArtworks) => {
+      return toCamel(exhibitWithArtworks);
+    });
 };
