@@ -1,3 +1,4 @@
 DROP DATABASE IF EXISTS exhibit;
-
+DROP DATABASE IF EXISTS exhibit_test;
 CREATE DATABASE exhibit;
+CREATE DATABASE exhibit_test;

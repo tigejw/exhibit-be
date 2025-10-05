@@ -8,6 +8,8 @@
     "dev": "nodemon src/listen.js",
     "setup-dbs": "psql -f ./db/setup.sql",
     "seed": "node ./db/seeds/run-seed.js",
+    "seed-test": "NODE_ENV=test node ./db/seeds/run-seed.js",
+    "dbtest": "NODE_ENV=test jest",
     "printdb": "psql -U tjw -d exhibit -c \"SELECT * FROM artworks;\" > ./db/query-results/artworks.txt && psql -U tjw -d exhibit -c \"SELECT * FROM exhibits;\" > ./db/query-results/exhibits.txt && psql -U tjw -d exhibit -c \"SELECT * FROM exhibit_artworks;\" > ./db/query-results/exhibit_artworks.txt"
   },
   "repository": {
