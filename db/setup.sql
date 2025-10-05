@@ -1,0 +1,3 @@
+DROP DATABASE IF EXISTS exhibit;
+
+CREATE DATABASE exhibit;

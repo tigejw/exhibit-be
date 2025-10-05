@@ -1,0 +1,5 @@
+ exhibit_id |     title     |          description          |         start_date         
+------------+---------------+-------------------------------+----------------------------
+          1 | my favourites | a collection of my favourites | 2025-10-04 20:23:05.766006
+(1 row)
+

@@ -5,7 +5,10 @@
   "main": "index.js",
   "scripts": {
     "test": "jest",
-    "dev": "nodemon src/listen.js"
+    "dev": "nodemon src/listen.js",
+    "setup-dbs": "psql -f ./db/setup.sql",
+    "seed": "node ./db/seeds/run-seed.js",
+    "printdb": "psql -U tjw -d exhibit -c \"SELECT * FROM artworks;\" > ./db/query-results/artworks.txt && psql -U tjw -d exhibit -c \"SELECT * FROM exhibits;\" > ./db/query-results/exhibits.txt && psql -U tjw -d exhibit -c \"SELECT * FROM exhibit_artworks;\" > ./db/query-results/exhibit_artworks.txt"
   },
   "repository": {
     "type": "git",
@@ -30,7 +33,10 @@
   "dependencies": {
     "axios": "^1.12.2",
     "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
     "express": "^5.1.0",
+    "pg": "^8.16.3",
+    "pg-format": "^1.0.4",
     "setup-polly-jest": "^0.11.0"
   }
 }

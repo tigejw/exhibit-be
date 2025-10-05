@@ -9,6 +9,10 @@ const FSPersister = require("@pollyjs/persister-fs");
 Polly.register(NodeHttpAdapter);
 Polly.register(FSPersister);
 
+//large api calls to met api will cause 503 errors
+//build up polly recordings using batch testing with .only
+//then run full test suite without .only
+
 describe("GET / (endpoints json)", () => {
   test("200: Responds with an object with documentation for each endpoint", () => {
     return request(app)
@@ -42,16 +46,28 @@ describe("GET /search", () => {
 
   test("200 responds with expected data structure (default)", () => {
     return request(app)
-      .get("/search?q=van gogh")
+      .get("/search?q=van gogh&limit=30")
       .expect(200)
       .then(({ body: { artworksData } }) => {
-        //check array
         expect(Array.isArray(artworksData)).toBe(true);
         expect(artworksData.length).toEqual(30);
-        //artwork object verification could be more thorough
+        const sources = new Set(artworksData.map((a) => a.source));
+        expect(sources.size).toBe(2);
         artworksData.forEach((artwork) => {
           expect(artwork).toHaveProperty("objectID");
           expect(artwork).toHaveProperty("title");
+          expect(artwork).toHaveProperty("artistDisplayName");
+          expect(artwork).toHaveProperty("medium");
+          expect(artwork).toHaveProperty("source");
+          expect(artwork).toHaveProperty("isOnView");
+          expect(artwork).toHaveProperty("localDepartmentLabel");
+          expect(artwork).toHaveProperty("museumDepartment");
+          expect(artwork).toHaveProperty("artistDisplayBio");
+          expect(artwork).toHaveProperty("artistNationality");
+          expect(artwork).toHaveProperty("objectDate");
+          expect(artwork).toHaveProperty("dimensions");
+          expect(artwork).toHaveProperty("primaryImage");
+          expect(artwork).toHaveProperty("primaryImageSmall");
           expect(artwork.source === "met" || artwork.source === "chicago").toBe(
             true
           );
@@ -229,6 +245,8 @@ describe("GET /search", () => {
           const titles = artworksData.map((a) => a.title);
           const sorted = [...titles].sort();
           expect(titles).toEqual(sorted);
+          const sources = new Set(artworksData.map((a) => a.source));
+          expect(sources.size).toBe(2);
         });
     });
     test("200 responds with artworks sorted by title in descending order", () => {
@@ -297,7 +315,7 @@ describe("GET /search", () => {
       return request(app)
         .get("/search?q=monet&limit=20&page=1")
         .expect(200)
-        .then(({ body}) => {
+        .then(({ body }) => {
           expect(body.artworksData.length).toBe(20);
           expect(body).toHaveProperty("totalResults");
           expect(body).toHaveProperty("page", 1);
