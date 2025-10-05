@@ -146,5 +146,50 @@
         }
       }
     }
+  },
+  "GET /exhibits": {
+    "description": "responds with all exhibits including a random thumbnail from each exhibits collection",
+    "queries": [],
+    "exampleResponse": {
+      "exhibits": [
+        {
+          "exhibit_id": 1,
+          "title": "my favourite cat photos",
+          "description": "meowmeow!",
+          "created_at": "2023-10-01T12:00:00Z",
+          "thumbnail": "https://example.com/cat_thumbnail.jpg"
+        },
+        {
+          "exhibit_id": 2,
+          "title": "my favourite dog photos",
+          "description": "woofwoof!",
+          "created_at": "2023-11-15T09:30:00Z",
+          "thumbnail": "https://example.com/dog_thumbnail.jpg"
+        }
+      ]
+    }
+  },
+  "POST /exhibits/:exhibit_id/artworks": {
+    "description": "adds artwork to the specified exhibit and responds with artwork object + exhibit_id + artwork_id from join tables",
+    "queries": [],
+    "exampleResponse": {
+      "exhibit_id": 1,
+      "artwork_id": 123,
+      "source": "met",
+      "objectID": 436536,
+      "title": "Women Picking Olives",
+      "isPublicDomain": true,
+      "localDepartmentLabel": null,
+      "museumDepartment": "European Paintings",
+      "artistDisplayName": "Vincent van Gogh",
+      "artistDisplayBio": "Dutch, Zundert 1853–1890 Auvers-sur-Oise",
+      "artistNationality": "Dutch",
+      "objectDate": "1889",
+      "medium": "Oil on canvas",
+      "dimensions": "28 5/8 x 36 in. (72.7 x 91.4 cm)",
+      "primaryImage": "https://images.metmuseum.org/CRDImages/ep/original/DP-17161-001.jpg",
+      "primaryImageSmall": "https://images.metmuseum.org/CRDImages/ep/web-large/DP-17161-001.jpg",
+      "isOnView": true
+    }
   }
 }
