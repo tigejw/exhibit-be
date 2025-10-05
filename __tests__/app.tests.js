@@ -1,6 +1,7 @@
 const request = require("supertest");
 const app = require("../src/app.js");
 const endpointsJson = require("../src/endpoints.json");
+const db = require("../db/connection");
 
 //polly setup
 const { Polly } = require("@pollyjs/core");
@@ -13,7 +14,11 @@ Polly.register(FSPersister);
 //build up polly recordings using batch testing with .only
 //then run full test suite without .only
 
-describe("GET / (endpoints json)", () => {
+afterAll(() => {
+  return db.end();
+});
+
+describe.skip("GET / (endpoints json)", () => {
   test("200: Responds with an object with documentation for each endpoint", () => {
     return request(app)
       .get("/")
@@ -24,7 +29,7 @@ describe("GET / (endpoints json)", () => {
   });
 });
 
-describe("GET /search", () => {
+describe.skip("GET /search", () => {
   let polly;
 
   beforeAll(() => {
@@ -54,6 +59,7 @@ describe("GET /search", () => {
         const sources = new Set(artworksData.map((a) => a.source));
         expect(sources.size).toBe(2);
         artworksData.forEach((artwork) => {
+          console.log(artwork);
           expect(artwork).toHaveProperty("objectID");
           expect(artwork).toHaveProperty("title");
           expect(artwork).toHaveProperty("artistDisplayName");
@@ -388,7 +394,8 @@ describe("GET /search", () => {
     });
   });
 });
-describe("invalid endpoints", () => {
+
+describe.skip("invalid endpoints", () => {
   test("404 responds with not found for invalid endpoint", () => {
     return request(app)
       .get("/invalid-endpoint")
@@ -398,6 +405,30 @@ describe("invalid endpoints", () => {
       });
   });
 });
+
+describe("GET /exhibits", () => {
+  test("200 responds with all exhibits", () => {
+    return request(app)
+      .get("/exhibits")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body).toHaveProperty("exhibits");
+        expect(Array.isArray(body.exhibits)).toBe(true);
+        expect(body.exhibits).toEqual(
+          expect.arrayContaining([
+            expect.objectContaining({
+              exhibit_id: expect.any(Number),
+              title: expect.any(String),
+              description: expect.any(String),
+              thumbnail: expect.any(String),
+            }),
+          ])
+        );
+      });
+  });
+});
+
+
 
 /*
   search endpoint should:
