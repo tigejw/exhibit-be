@@ -69,13 +69,14 @@ exports.fetchMetArtworks = async (
             },
           }
         );
+        console.log(res.data)
         return standardiseArtwork(res.data, "met", department);
       } catch (err) {
         return null;
       }
     })
   );
-
+  
   const filteredNulls = artworks.filter((artwork) => artwork);
   const hasNextPage = end < totalResults;
   return { artworksData: filteredNulls, totalResults, hasNextPage };

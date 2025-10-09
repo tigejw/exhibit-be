@@ -35,7 +35,7 @@ describe.skip("GET / (endpoints json)", () => {
   });
 });
 
-describe.skip("GET /search", () => {
+describe("GET /search", () => {
   let polly;
 
   beforeAll(() => {
@@ -103,7 +103,7 @@ describe.skip("GET /search", () => {
         });
     });
 
-    test("200 responds with expected data structure for source=met", () => {
+    test.only("200 responds with expected data structure for source=met", () => {
       return request(app)
         .get("/search?q=monet&source=met")
         .expect(200)
@@ -111,6 +111,7 @@ describe.skip("GET /search", () => {
           expect(Array.isArray(artworksData)).toBe(true);
           expect(artworksData.length).toEqual(15);
           artworksData.forEach((artwork) => {
+            console.log(artwork.primaryImageSmall);
             expect(artwork).toHaveProperty("objectID");
             expect(artwork).toHaveProperty("title");
             expect(artwork.source).toBe("met");
@@ -709,4 +710,6 @@ also want a create exhibit endpoint
   Get/exhibits/:exhibit_id 
   Delete/exhibits/:exhibit_id/artwork/:artwork_id 
   
+
+  //create EXHIBIT!!!!
 */
