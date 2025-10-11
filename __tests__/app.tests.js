@@ -679,7 +679,7 @@ describe("GET /exhibits/:exhibit_id", () => {
   });
 });
 
-describe.only("POST /exhibits", () => {
+describe("POST /exhibits", () => {
   test("201 responds with the created exhibit", () => {
     return request(app)
       .post("/exhibits")
@@ -705,6 +705,92 @@ describe.only("POST /exhibits", () => {
     return request(app)
       .post("/exhibits")
       .send({ title: "missing discription"})
+      .expect(400)
+      .then(({ body }) => {
+        expect(body).toHaveProperty("error");
+        expect(typeof body.error).toBe("string");
+      });
+  });
+});
+
+describe.only("GET /artwork/:artwork_id", () => {
+  test("200: responds with a standardised artwork object for a valid met artwork_id", () => {
+    return request(app)
+      .get("/artwork/436524met")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body).toHaveProperty("artwork");
+        expect(body.artwork).toEqual(
+          expect.objectContaining({
+            objectID: "436524met",
+            title: expect.any(String),
+            artistDisplayName: expect.any(String),
+            medium: expect.any(String),
+            source: "met",
+            isOnView: expect.any(Boolean),
+            localDepartmentLabel: expect.any(String),
+            museumDepartment: expect.any(String),
+            artistDisplayBio: expect.any(String),
+            artistNationality: expect.any(String),
+            objectDate: expect.any(String),
+            dimensions: expect.any(String),
+            primaryImage: expect.any(String),
+            primaryImageSmall: expect.any(String),
+          })
+        );
+      });
+  });
+
+  test("200: responds with a standardised artwork object for a valid chicago artwork_id", () => {
+    return request(app)
+      .get("/artwork/129884chicago")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body).toHaveProperty("artwork");
+        expect(body.artwork).toEqual(
+          expect.objectContaining({
+            objectID: "129884chicago",
+            title: expect.any(String),
+            artistDisplayName: expect.any(String),
+            medium: expect.any(String),
+            source: "chicago",
+            isOnView: expect.any(Boolean),
+            localDepartmentLabel: expect.any(String),
+            museumDepartment: expect.any(String),
+            artistDisplayBio: expect.any(String),
+            artistNationality: expect.any(String),
+            objectDate: expect.any(String),
+            dimensions: expect.any(String),
+            primaryImage: expect.any(String),
+            primaryImageSmall: expect.any(String),
+          })
+        );
+      });
+  });
+
+  test("400: responds with error for invalid artwork_id format", () => {
+    return request(app)
+      .get("/artwork/12345")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body).toHaveProperty("error");
+        expect(typeof body.error).toBe("string");
+      });
+  });
+
+  test("404: responds with error for non-existent artwork_id", () => {
+    return request(app)
+      .get("/artwork/000000met")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body).toHaveProperty("error");
+        expect(typeof body.error).toBe("string");
+      });
+  });
+
+  test("400: responds with error for unsupported source in artwork_id", () => {
+    return request(app)
+      .get("/artwork/12345tate")
       .expect(400)
       .then(({ body }) => {
         expect(body).toHaveProperty("error");

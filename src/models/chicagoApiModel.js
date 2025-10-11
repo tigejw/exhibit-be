@@ -67,6 +67,14 @@ exports.fetchChicagoArtworks = async (query, onDisplay, department, limit = 15, 
   return { artworksData: filtered, totalResults, hasNextPage };
 };
 
-
-
-
+exports.fetchChicagoArtworkById = async (id) => {
+  try {
+    const { data } = await axios.get(
+      `https://api.artic.edu/api/v1/artworks/${id}`
+    );
+    if (!data || !data.data) return null;
+    return standardiseArtwork(data.data, "chicago");
+  } catch (err) {
+    return null;
+  }
+};

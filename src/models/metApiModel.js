@@ -80,3 +80,22 @@ exports.fetchMetArtworks = async (
   const hasNextPage = end < totalResults;
   return { artworksData: filteredNulls, totalResults, hasNextPage };
 };
+
+exports.fetchMetArtworkById = async (id) => {
+  try {
+    const { data } = await axios.get(
+      `https://collectionapi.metmuseum.org/public/collection/v1/objects/${id}`,
+      {
+        headers: {
+          "User-Agent": "Mozilla/5.0",
+          "Accept": "application/json"
+        }
+      }
+    );
+
+    if (!data || !data.objectID) return null;
+    return standardiseArtwork(data, "met");
+  } catch (err) {
+    return null;
+  }
+};
