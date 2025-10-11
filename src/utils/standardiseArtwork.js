@@ -15,7 +15,7 @@ exports.standardiseArtwork = function (artwork, source, localDepartmentLabel) {
       medium: artwork.medium || null,
       dimensions: artwork.dimensions || null,
       primaryImage: artwork.primaryImage || null,
-      primaryImageSmall: artwork.primaryImageSmall || null,
+      primaryImageSmall: artwork.primaryImageSmall,
       isOnView: artwork.GalleryNumber ? true : false,
     };
   } else if (source === "chicago") {

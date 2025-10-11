@@ -75,7 +75,7 @@ exports.fetchMetArtworks = async (
       }
     })
   );
-
+  
   const filteredNulls = artworks.filter((artwork) => artwork);
   const hasNextPage = end < totalResults;
   return { artworksData: filteredNulls, totalResults, hasNextPage };

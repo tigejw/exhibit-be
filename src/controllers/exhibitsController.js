@@ -1,6 +1,8 @@
 const {
   fetchExhibits,
   insertArtworkByExhibit,
+  fetchExhibitById,
+  insertExhibit
 } = require("../models/exhibitsModel");
 
 exports.getExhibits = (req, res, next) => {
@@ -25,3 +27,25 @@ exports.postArtworkToExhibit = (req, res, next) => {
       next(err);
     });
 };
+
+exports.getExhibit = (req, res, next) => {
+  const { exhibit_id } = req.params;
+  fetchExhibitById(exhibit_id)
+    .then((exhibit) => {
+      res.status(200).send({ exhibit });
+    })
+    .catch((err) => {
+      next(err);
+    });
+}
+
+exports.postExhibit = (req, res, next) => {
+  const { title, description } = req.body;
+ 
+  insertExhibit(title, description)
+    .then((exhibit) => {
+      res.status(201).send({ exhibit });
+    })
+    .catch(next);
+};
+

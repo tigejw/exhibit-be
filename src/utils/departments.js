@@ -42,7 +42,7 @@ const departmentFilterToAPI = {
   },
   "The Libraries": { chicago: [], met: ["The Libraries"] },
   "Medieval Art": { chicago: [], met: ["Medieval Art"] },
-  "Musical Instruments": { met: ["Musical Instruments"] },
+  "Musical Instruments": { met: ["Musical Instruments"], chicago: [] }, 
   "Photographs": {
     chicago: ["Photography and Media"],
     met: ["Photographs"],
@@ -77,6 +77,7 @@ const metDepartmentIDs = [
 const departmentNames = Object.keys(departmentFilterToAPI);
 
 const localDepartmentLabelFromMuseumDep = (museumDepartment, source) => {
+
   if (!museumDepartment) return null;
 
   for (const key in departmentFilterToAPI) {

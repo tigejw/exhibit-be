@@ -34,8 +34,16 @@ exports.fetchChicagoArtworks = async (query, onDisplay, department, limit = 15, 
       return { artworksData: [], totalResults: 0, hasNextPage: false };
     }
   }
+  //removes duplicated from artworks in multiple departments
+  //maybe refactor?
+  let uniqueArtworksMap = {}
+  for (const artwork of relevantArtworks) {
+    uniqueArtworksMap[artwork.id] = artwork;
+  }
+  const uniqueArtworks = Object.values(uniqueArtworksMap);
+
   const artworks = await Promise.all(
-    relevantArtworks.map((artwork) => {
+    uniqueArtworks.map((artwork) => {
       return axios
         .get(artwork.api_link)
         .then(({ data }) => standardiseArtwork(data.data, "chicago", department))

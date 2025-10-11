@@ -37,6 +37,8 @@ exports.searchArtworks = async (req, res, next) => {
       return res.status(400).send({ error: "Bad request: limit" });
     }
   // even for calling both apis
+  //this needs to be refactored to handle offsets when one api fills deficit of other
+  //and also no odd number limits is janky
   if ((!source || source === "") && limit % 2 !== 0) {
     limit += 1;
   }

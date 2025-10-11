@@ -24,7 +24,7 @@ afterAll(() => {
   return db.end();
 });
 
-describe.skip("GET / (endpoints json)", () => {
+describe("GET / (endpoints json)", () => {
   test("200: Responds with an object with documentation for each endpoint", () => {
     return request(app)
       .get("/")
@@ -35,7 +35,7 @@ describe.skip("GET / (endpoints json)", () => {
   });
 });
 
-describe.skip("GET /search", () => {
+describe("GET /search", () => {
   let polly;
 
   beforeAll(() => {
@@ -401,7 +401,7 @@ describe.skip("GET /search", () => {
   });
 });
 
-describe.skip("invalid endpoints", () => {
+describe("invalid endpoints", () => {
   test("404 responds with not found for invalid endpoint", () => {
     return request(app)
       .get("/invalid-endpoint")
@@ -621,6 +621,97 @@ describe("POST /exhibits/:exhibit_id/artwork", () => {
   });
 });
 
+describe("GET /exhibits/:exhibit_id", () => {
+  test("200 responds with exhibit and related artworks", () => {
+    return request(app)
+      .get("/exhibits/1")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body).toHaveProperty("exhibit");
+        expect(body.exhibit).toHaveProperty("exhibit_id", 1);
+        expect(body.exhibit).toHaveProperty("thumbnail");
+        expect(body.exhibit).toHaveProperty("title");
+        expect(body.exhibit).toHaveProperty("artworks");
+        expect(Array.isArray(body.exhibit.artworks)).toBe(true);
+        expect(body.exhibit.artworks.length).toBe(4);
+        body.exhibit.artworks.forEach((artwork) => {
+          expect(artwork).toEqual(
+            expect.objectContaining({
+              exhibit_id: 1,
+              artwork_id: expect.any(Number),
+              source: expect.any(String),
+              objectID: expect.any(String),
+              title: expect.any(String),
+              isPublicDomain: expect.any(Boolean),
+              localDepartmentLabel: expect.any(String),
+              museumDepartment: expect.any(String),
+              artistDisplayName: expect.any(String),
+              artistDisplayBio: expect.any(String),
+              artistNationality: expect.any(String),
+              objectDate: expect.any(String),
+              medium: expect.any(String),
+              dimensions: expect.any(String),
+              primaryImage: expect.any(String),
+              primaryImageSmall: expect.any(String),
+              isOnView: expect.any(Boolean),
+            })
+          );
+        });
+      });
+  });
+  test("should respond with 404 for non-existent exhibit", () => {
+    return request(app)
+      .get("/exhibits/314")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body).toHaveProperty("error");
+        expect(typeof body.error).toBe("string");
+      });
+  });
+  test("should respond with 400 for invalid exhibit_id", () => {
+    return request(app)
+      .get("/exhibits/myfavoutiteexhibitid")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body).toHaveProperty("error");
+        expect(typeof body.error).toBe("string");
+      });
+  });
+});
+
+describe.only("POST /exhibits", () => {
+  test("201 responds with the created exhibit", () => {
+    return request(app)
+      .post("/exhibits")
+      .send({
+        title: "a new collection",
+        description: "a collection of new artworks",
+      })
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.exhibit).toEqual(
+          expect.objectContaining({
+            exhibit_id: 2,
+            title: "a new collection",
+            description: "a collection of new artworks",
+            thumbnail: null, //empty exhibit add placeholder?
+            start_date: expect.any(String),
+          })
+        );
+      });
+  });
+
+  test("400 responds with error for missing title or description", () => {
+    return request(app)
+      .post("/exhibits")
+      .send({ title: "missing discription"})
+      .expect(400)
+      .then(({ body }) => {
+        expect(body).toHaveProperty("error");
+        expect(typeof body.error).toBe("string");
+      });
+  });
+});
 /*
   search endpoint should:
   
@@ -651,4 +742,6 @@ also want a create exhibit endpoint
   Get/exhibits/:exhibit_id 
   Delete/exhibits/:exhibit_id/artwork/:artwork_id 
   
+
+  //create EXHIBIT!!!! [/]
 */
