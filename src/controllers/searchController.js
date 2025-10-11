@@ -114,7 +114,6 @@ exports.searchArtworks = async (req, res, next) => {
 
 exports.getArtworkByID = async (req, res, next) => {
   const { artwork_id } = req.params;
-  console.log(artwork_id, "before");
   if (
     typeof artwork_id !== "string" ||
     (!artwork_id.endsWith("met") && !artwork_id.endsWith("chicago"))
@@ -125,7 +124,6 @@ exports.getArtworkByID = async (req, res, next) => {
         error: "Invalid artwork_id format. Must end with 'met' or 'chicago'.",
       });
   }
-console.log(artwork_id, "after");
   try {
     let artwork = null;
     if (artwork_id.endsWith("met")) {
