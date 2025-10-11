@@ -24,7 +24,7 @@ afterAll(() => {
   return db.end();
 });
 
-describe.skip("GET / (endpoints json)", () => {
+describe("GET / (endpoints json)", () => {
   test("200: Responds with an object with documentation for each endpoint", () => {
     return request(app)
       .get("/")
@@ -103,7 +103,7 @@ describe("GET /search", () => {
         });
     });
 
-    test.only("200 responds with expected data structure for source=met", () => {
+    test("200 responds with expected data structure for source=met", () => {
       return request(app)
         .get("/search?q=monet&source=met")
         .expect(200)
@@ -111,7 +111,6 @@ describe("GET /search", () => {
           expect(Array.isArray(artworksData)).toBe(true);
           expect(artworksData.length).toEqual(15);
           artworksData.forEach((artwork) => {
-            console.log(artwork.primaryImageSmall);
             expect(artwork).toHaveProperty("objectID");
             expect(artwork).toHaveProperty("title");
             expect(artwork.source).toBe("met");
@@ -402,7 +401,7 @@ describe("GET /search", () => {
   });
 });
 
-describe.skip("invalid endpoints", () => {
+describe("invalid endpoints", () => {
   test("404 responds with not found for invalid endpoint", () => {
     return request(app)
       .get("/invalid-endpoint")
@@ -413,7 +412,7 @@ describe.skip("invalid endpoints", () => {
   });
 });
 
-describe.skip("GET /exhibits", () => {
+describe("GET /exhibits", () => {
   test("200 responds with all exhibits", () => {
     return request(app)
       .get("/exhibits")
@@ -435,7 +434,7 @@ describe.skip("GET /exhibits", () => {
   });
 });
 
-describe.skip("POST /exhibits/:exhibit_id/artwork", () => {
+describe("POST /exhibits/:exhibit_id/artwork", () => {
   test("201 responds with added artwork", () => {
     return request(app)
       .post("/exhibits/1/artwork")
@@ -660,26 +659,59 @@ describe("GET /exhibits/:exhibit_id", () => {
         });
       });
   });
-  test('should respond with 404 for non-existent exhibit', () => {
+  test("should respond with 404 for non-existent exhibit", () => {
     return request(app)
-      .get('/exhibits/314')
+      .get("/exhibits/314")
       .expect(404)
       .then(({ body }) => {
-        expect(body).toHaveProperty('error');
-        expect(typeof body.error).toBe('string');
+        expect(body).toHaveProperty("error");
+        expect(typeof body.error).toBe("string");
       });
   });
-  test('should respond with 400 for invalid exhibit_id', () => {
+  test("should respond with 400 for invalid exhibit_id", () => {
     return request(app)
-      .get('/exhibits/myfavoutiteexhibitid')
+      .get("/exhibits/myfavoutiteexhibitid")
       .expect(400)
       .then(({ body }) => {
-        expect(body).toHaveProperty('error');
-        expect(typeof body.error).toBe('string');
-      }); 
+        expect(body).toHaveProperty("error");
+        expect(typeof body.error).toBe("string");
+      });
   });
 });
 
+describe.only("POST /exhibits", () => {
+  test("201 responds with the created exhibit", () => {
+    return request(app)
+      .post("/exhibits")
+      .send({
+        title: "a new collection",
+        description: "a collection of new artworks",
+      })
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.exhibit).toEqual(
+          expect.objectContaining({
+            exhibit_id: 2,
+            title: "a new collection",
+            description: "a collection of new artworks",
+            thumbnail: null, //empty exhibit add placeholder?
+            start_date: expect.any(String),
+          })
+        );
+      });
+  });
+
+  test("400 responds with error for missing title or description", () => {
+    return request(app)
+      .post("/exhibits")
+      .send({ title: "missing discription"})
+      .expect(400)
+      .then(({ body }) => {
+        expect(body).toHaveProperty("error");
+        expect(typeof body.error).toBe("string");
+      });
+  });
+});
 /*
   search endpoint should:
   
@@ -711,5 +743,5 @@ also want a create exhibit endpoint
   Delete/exhibits/:exhibit_id/artwork/:artwork_id 
   
 
-  //create EXHIBIT!!!!
+  //create EXHIBIT!!!! [/]
 */

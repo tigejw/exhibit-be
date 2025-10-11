@@ -69,7 +69,6 @@ exports.fetchMetArtworks = async (
             },
           }
         );
-        console.log(res.data)
         return standardiseArtwork(res.data, "met", department);
       } catch (err) {
         return null;

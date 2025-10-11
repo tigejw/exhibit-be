@@ -1,7 +1,8 @@
 const {
   fetchExhibits,
   insertArtworkByExhibit,
-  fetchExhibitById
+  fetchExhibitById,
+  insertExhibit
 } = require("../models/exhibitsModel");
 
 exports.getExhibits = (req, res, next) => {
@@ -37,3 +38,14 @@ exports.getExhibit = (req, res, next) => {
       next(err);
     });
 }
+
+exports.postExhibit = (req, res, next) => {
+  const { title, description } = req.body;
+ 
+  insertExhibit(title, description)
+    .then((exhibit) => {
+      res.status(201).send({ exhibit });
+    })
+    .catch(next);
+};
+

@@ -133,3 +133,18 @@ exports.fetchExhibitById = (exhibit_id) => {
       return toCamel(exhibitWithArtworks);
     });
 };
+
+
+exports.insertExhibit = (title, description) => {
+  if (!title || !description) {
+    return Promise.reject({ status: 400, msg: "missing title or description" });
+  }
+  return db
+    .query(
+      `INSERT INTO exhibits (title, description)
+       VALUES ($1, $2)
+       RETURNING *, NULL AS thumbnail;`,
+      [title, description]
+    )
+    .then(({ rows }) => rows[0]);
+};
