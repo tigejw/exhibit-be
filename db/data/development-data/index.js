@@ -1,17 +1,17 @@
 module.exports = {
   exhibitData: [
     {
-      title: "my favourites",
+      title: "example exhibit",
       description: "a collection of my favourites",
     },
-    {
-      title: "my favourite cat photos",
-      description: "meowmeow!",
-    },
-    {
-      title: "my favourite dog photos",
-      description: "woofwoof!",
-    },
+    // {
+    //   title: "my favourite cat photos",
+    //   description: "meowmeow!",
+    // },
+    // {
+    //   title: "my favourite dog photos",
+    //   description: "woofwoof!",
+    // },
   ],
   artworkData: [
     {
@@ -114,27 +114,28 @@ module.exports = {
   //refactor to use ids not titles
   exhibitArtworkData: [
     {
-      exhibit_title: "my favourites",
+      exhibit_title: "example exhibit",
       artwork_title: "Water Lilies",
     },
     {
-      exhibit_title: "my favourites",
+      exhibit_title: "example exhibit",
       artwork_title: "The Carrot Puller",
     },
     {
-      exhibit_title: "my favourites",
+      exhibit_title: "example exhibit",
       artwork_title: "Weeping Tree",
     },
     {
-      exhibit_title: "my favourites",
+      exhibit_title: "example exhibit",
       artwork_title: "Olive Trees",
-    },{
-      exhibit_title: "my favourite cat photos",
-      artwork_title: "Weeping Tree",
     },
-    {
-      exhibit_title: "my favourite dog photos",
-      artwork_title: "Olive Trees",
-    }
+    // {
+    //   exhibit_title: "my favourite cat photos",
+    //   artwork_title: "Weeping Tree",
+    // },
+    // {
+    //   exhibit_title: "my favourite dog photos",
+    //   artwork_title: "Olive Trees",
+    // }
   ],
 };
