@@ -11,7 +11,7 @@
     "seed-test": "NODE_ENV=test node ./db/seeds/run-seed.js",
     "dbtest": "NODE_ENV=test jest",
     "printdb": "psql -U tjw -d exhibit -c \"SELECT * FROM artworks;\" > ./db/query-results/artworks.txt && psql -U tjw -d exhibit -c \"SELECT * FROM exhibits;\" > ./db/query-results/exhibits.txt && psql -U tjw -d exhibit -c \"SELECT * FROM exhibit_artworks;\" > ./db/query-results/exhibit_artworks.txt",
-    "start": "node listen.js",
+    "start": "node src/listen.js",
     "seed-prod": "NODE_ENV=production npm run seed"
   },
   "repository": {
