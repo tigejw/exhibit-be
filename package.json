@@ -11,7 +11,7 @@
     "seed-test": "NODE_ENV=test node ./db/seeds/run-seed.js",
     "dbtest": "NODE_ENV=test jest",
     "printdb": "psql -U tjw -d exhibit -c \"SELECT * FROM artworks;\" > ./db/query-results/artworks.txt && psql -U tjw -d exhibit -c \"SELECT * FROM exhibits;\" > ./db/query-results/exhibits.txt && psql -U tjw -d exhibit -c \"SELECT * FROM exhibit_artworks;\" > ./db/query-results/exhibit_artworks.txt",
-    "start": "node src/app.js",
+    "start": "node listen.js",
     "seed-prod": "NODE_ENV=production npm run seed"
   },
   "repository": {
@@ -39,6 +39,7 @@
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
+    "node": "^24.10.0",
     "pg": "^8.16.3",
     "pg-format": "^1.0.4",
     "setup-polly-jest": "^0.11.0"
