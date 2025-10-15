@@ -1,6 +1,8 @@
 const { departmentNames } = require("../utils/departments");
 const { fetchMetArtworks } = require("../models/metApiModel");
 const { fetchChicagoArtworks } = require("../models/chicagoApiModel");
+const { fetchMetArtworkById } = require("../models/metApiModel");
+const { fetchChicagoArtworkById } = require("../models/chicagoApiModel");
 const sortArtworks = require("../utils/sortArtworks");
 exports.searchArtworks = async (req, res, next) => {
   const { q, source, onDisplay, department, sortBy, order } = req.query;
@@ -25,17 +27,17 @@ exports.searchArtworks = async (req, res, next) => {
     return res.status(400).send({ error: "Bad request: sort_by" });
   }
   //limit
-    if (limit === undefined) {
-      if (source === "met" || source === "chicago") {
-        limit = 15;
-      } else {
-        limit = 30;
-      }
+  if (limit === undefined) {
+    if (source === "met" || source === "chicago") {
+      limit = 15;
+    } else {
+      limit = 30;
     }
-    limit = Number(limit);
-    if (!Number.isInteger(limit) || limit <= 0) {
-      return res.status(400).send({ error: "Bad request: limit" });
-    }
+  }
+  limit = Number(limit);
+  if (!Number.isInteger(limit) || limit <= 0) {
+    return res.status(400).send({ error: "Bad request: limit" });
+  }
   // even for calling both apis
   //this needs to be refactored to handle offsets when one api fills deficit of other
   //and also no odd number limits is janky
@@ -44,7 +46,12 @@ exports.searchArtworks = async (req, res, next) => {
   }
 
   //page
-  if (page && (isNaN(Number(page)) || !Number.isInteger(Number(page)) || Number(page) <= 0)) {
+  if (
+    page &&
+    (isNaN(Number(page)) ||
+      !Number.isInteger(Number(page)) ||
+      Number(page) <= 0)
+  ) {
     return res.status(400).send({ error: "Bad request: page" });
   }
   page = Number(page) || 1;
@@ -85,8 +92,8 @@ exports.searchArtworks = async (req, res, next) => {
         fetchChicagoArtworks(q, onDisplay, department, perApiLimit, page),
       ]);
       artworksData = [
-        ...metResults.artworksData,
         ...chicagoResults.artworksData,
+        ...metResults.artworksData,
       ];
       totalResults = metResults.totalResults + chicagoResults.totalResults;
       hasNextPage = metResults.hasNextPage || chicagoResults.hasNextPage;
@@ -100,6 +107,38 @@ exports.searchArtworks = async (req, res, next) => {
     res
       .status(200)
       .send({ artworksData, totalResults, hasNextPage, page, limit });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.getArtworkByID = async (req, res, next) => {
+  const { artwork_id } = req.params;
+  if (
+    typeof artwork_id !== "string" ||
+    (!artwork_id.endsWith("met") && !artwork_id.endsWith("chicago"))
+  ) {
+    return res
+      .status(400)
+      .send({
+        error: "Invalid artwork_id format. Must end with 'met' or 'chicago'.",
+      });
+  }
+  try {
+    let artwork = null;
+    if (artwork_id.endsWith("met")) {
+      const id = artwork_id.replace("met", "");
+      artwork = await fetchMetArtworkById(id);
+    } else if (artwork_id.endsWith("chicago")) {
+      const id = artwork_id.replace("chicago", "");
+      artwork = await fetchChicagoArtworkById(id);
+    }
+
+    if (!artwork) {
+      return res.status(404).send({ error: "Artwork not found." });
+    }
+
+    res.status(200).send({ artwork });
   } catch (err) {
     next(err);
   }
