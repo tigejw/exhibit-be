@@ -434,7 +434,7 @@ describe("GET /exhibits", () => {
   });
 });
 
-describe("POST /exhibits/:exhibit_id/artwork", () => {
+describe.only("POST /exhibits/:exhibit_id/artwork", () => {
   test("201 responds with added artwork", () => {
     return request(app)
       .post("/exhibits/1/artwork")

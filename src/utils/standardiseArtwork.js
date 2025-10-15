@@ -1,4 +1,5 @@
 const { localDepartmentLabelFromMuseumDep } = require("./departments");
+const { missingImage } = require("./missingImage");
 exports.standardiseArtwork = function (artwork, source, localDepartmentLabel) {
   if (source === "met") {
     return {
@@ -14,9 +15,10 @@ exports.standardiseArtwork = function (artwork, source, localDepartmentLabel) {
       objectDate: artwork.objectDate || null,
       medium: artwork.medium || null,
       dimensions: artwork.dimensions || null,
-      primaryImage: artwork.primaryImage || null,
-      primaryImageSmall: artwork.primaryImageSmall,
+      primaryImage: missingImage(artwork.primaryImage),
+      primaryImageSmall: missingImage(artwork.primaryImageSmall),
       isOnView: artwork.GalleryNumber ? true : false,
+      url: "https://www.metmuseum.org/art/collection/search/" + artwork.objectID,
     };
   } else if (source === "chicago") {
     return {
@@ -40,6 +42,7 @@ exports.standardiseArtwork = function (artwork, source, localDepartmentLabel) {
         ? `https://www.artic.edu/iiif/2/${artwork.image_id}/full/200,/0/default.jpg`
         : null,
       isOnView: artwork.is_on_view || false,
+      url: "https://www.artic.edu/artworks/" + artwork.id, 
     };
   }
   return null;

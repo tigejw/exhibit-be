@@ -92,8 +92,8 @@ exports.searchArtworks = async (req, res, next) => {
         fetchChicagoArtworks(q, onDisplay, department, perApiLimit, page),
       ]);
       artworksData = [
-        ...metResults.artworksData,
         ...chicagoResults.artworksData,
+        ...metResults.artworksData,
       ];
       totalResults = metResults.totalResults + chicagoResults.totalResults;
       hasNextPage = metResults.hasNextPage || chicagoResults.hasNextPage;
